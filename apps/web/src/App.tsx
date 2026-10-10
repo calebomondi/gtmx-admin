@@ -1,5 +1,40 @@
-import DashboardPage from "@/app/dashboard/dashboard-component"
+import { lazy, Suspense } from "react"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { Skeleton } from "@workspace/ui/components/skeleton"
+
+import { AdminLayout } from "@/components/admin-layout"
+
+// One chunk per page: recharts only loads with the overview.
+const page = <K extends string>(load: () => Promise<Record<K, React.ComponentType>>, name: K) =>
+  lazy(() => load().then((m) => ({ default: m[name] })))
+
+const OverviewPage = page(() => import("@/features/overview/overview-page"), "OverviewPage")
+const UsersPage = page(() => import("@/features/users/users-page"), "UsersPage")
+const UserDetailPage = page(() => import("@/features/users/user-detail-page"), "UserDetailPage")
+const RunsPage = page(() => import("@/features/runs/runs-page"), "RunsPage")
+const RunDetailPage = page(() => import("@/features/runs/run-detail-page"), "RunDetailPage")
+const WorkspacesPage = page(() => import("@/features/workspaces/workspaces-page"), "WorkspacesPage")
+const SignalsPage = page(() => import("@/features/signals/signals-page"), "SignalsPage")
+const AuditPage = page(() => import("@/features/audit/audit-page"), "AuditPage")
 
 export function App() {
-  return <DashboardPage />
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<Skeleton className="m-6 h-[80svh]" />}>
+        <Routes>
+          <Route element={<AdminLayout />}>
+            <Route index element={<OverviewPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="users/:userId" element={<UserDetailPage />} />
+            <Route path="runs" element={<RunsPage />} />
+            <Route path="runs/:runId" element={<RunDetailPage />} />
+            <Route path="workspaces" element={<WorkspacesPage />} />
+            <Route path="signals" element={<SignalsPage />} />
+            <Route path="audit" element={<AuditPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  )
 }
