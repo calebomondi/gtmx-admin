@@ -5,7 +5,7 @@ import { Input } from "@workspace/ui/components/input"
 import { PageShell } from "@/components/page-shell"
 import { PagedTable, type Column } from "@/components/paged-table"
 import { adminApi, type UserRow } from "@/lib/api/admin"
-import { formatRelative } from "@/lib/format"
+import { formatDuration, formatRelative } from "@/lib/format"
 import { useApi } from "@/lib/use-api"
 import { useSearchState } from "@/lib/use-search-state"
 
@@ -30,9 +30,11 @@ const COLUMNS: Column<UserRow>[] = [
     ),
   },
   { header: "Workspaces", cell: (u) => u.workspaces, className: "text-right tabular-nums" },
+  { header: "Projects", cell: (u) => u.projects, className: "text-right tabular-nums" },
   { header: "Runs", cell: (u) => u.runs, className: "text-right tabular-nums" },
-  { header: "Last run", cell: (u) => formatRelative(u.last_run_at) },
-  { header: "Last sign-in", cell: (u) => formatRelative(u.last_sign_in_at) },
+  { header: "Connected", cell: (u) => u.connections ?? "—", className: "text-right tabular-nums" },
+  { header: "Time (30d)", cell: (u) => formatDuration(u.active_seconds_30d), className: "text-right tabular-nums" },
+  { header: "Last seen", cell: (u) => formatRelative(u.last_seen_at) },
   { header: "Joined", cell: (u) => formatRelative(u.created_at) },
 ]
 

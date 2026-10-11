@@ -48,6 +48,13 @@ export interface KindMetrics {
   avg_duration_s: number | null
 }
 
+export interface UserSpend {
+  user_id: string
+  email: string | null
+  runs: number
+  cost_usd: number
+}
+
 export interface Metrics {
   days: number
   total_users: number
@@ -62,6 +69,94 @@ export interface Metrics {
   api_costs: CostLine[]
   unpriced: string[]
   series: DayMetrics[]
+  discovery_p50_s: number | null
+  discovery_p90_s: number | null
+  spend_per_active_user_usd: number | null
+  cost_per_completed_discovery_usd: number | null
+  top_spenders: UserSpend[]
+}
+
+export type OfferType = "product" | "service"
+
+export interface EngagementDay {
+  day: string
+  new_users: number
+  active_users: number
+  active_seconds: number
+  workspaces_created: number
+  products_created: number
+  services_created: number
+  projects_created: number
+  workspaces_interacted: number
+  chat_messages: number
+  competitor_runs: number
+  account_runs: number
+  outreach_drafted: number
+  outreach_sent: number
+}
+
+export interface TopWorkspace {
+  id: string
+  name: string | null
+  user_id: string
+  user_email: string | null
+  offer_type: OfferType | null
+  active_seconds: number
+  visits: number
+}
+
+export interface Engagement {
+  days: number
+  total_users: number
+  new_users: number
+  weekly_active_users: number
+  monthly_active_users: number
+  stickiness: number | null
+  returning_users: number
+  sessions: number
+  active_time_users: number
+  total_active_seconds: number
+  avg_active_seconds_per_user: number | null
+  avg_session_seconds: number | null
+  workspaces_total: number
+  workspaces_created: number
+  projects_total: number
+  projects_created: number
+  avg_workspaces_per_user: number | null
+  avg_projects_per_user: number | null
+  offer_types: Record<OfferType | "unknown", number>
+  top_workspaces: TopWorkspace[]
+  series: EngagementDay[]
+}
+
+export interface FunnelStep {
+  key: string
+  label: string
+  users: number
+}
+
+export interface Funnel {
+  days: number
+  steps: FunnelStep[]
+  discoveries_started: number
+  discoveries_completed: number
+  interview_dropoffs: { question: string; runs: number }[]
+  failure_reasons: { message: string; runs: number; last_at: string }[]
+}
+
+export interface PlatformUsage {
+  platform: string
+  connected_users: number
+  sends: number
+  senders: number
+}
+
+export interface Connections {
+  days: number
+  error: string | null
+  users_with_connections: number
+  avg_connections_per_user: number | null
+  platforms: PlatformUsage[]
 }
 
 export interface UserRow {
@@ -73,13 +168,18 @@ export interface UserRow {
   is_admin: boolean
   suspended: boolean
   workspaces: number
+  projects: number
   runs: number
   last_run_at: string | null
+  last_seen_at: string | null
+  active_seconds_30d: number
+  connections: number | null
 }
 
 export interface WorkspaceRow {
   id: string
   name: string | null
+  offer_type: OfferType | null
   user_id: string
   user_email: string | null
   archived: boolean
@@ -122,10 +222,21 @@ export interface RunDetail extends RunRow {
   api_costs: CostLine[]
 }
 
+export interface UserConnection {
+  platform: string
+  status: string
+  display_name: string | null
+  sends: number
+}
+
 export interface UserDetail extends UserRow {
   spend_usd: number
   recent_runs: RunRow[]
   workspace_list: WorkspaceRow[]
+  connection_list: UserConnection[]
+  connections_error: string | null
+  activity: { day: string; active_seconds: number }[]
+  top_workspaces: TopWorkspace[]
 }
 
 export interface SignalRow {
@@ -168,6 +279,9 @@ export interface PageQuery {
 export const adminApi = {
   me: () => apiFetch<Me>("/me"),
   metrics: (days: number) => apiFetch<Metrics>("/metrics", { query: { days } }),
+  engagement: (days: number) => apiFetch<Engagement>("/metrics/engagement", { query: { days } }),
+  funnel: (days: number) => apiFetch<Funnel>("/metrics/funnel", { query: { days } }),
+  connections: (days: number) => apiFetch<Connections>("/metrics/connections", { query: { days } }),
 
   users: (q: PageQuery & { q?: string }) => apiFetch<Page<UserRow>>("/users", { query: { ...q } }),
   user: (id: string) => apiFetch<UserDetail>(`/users/${id}`),
