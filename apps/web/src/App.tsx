@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 
 import { AdminLayout } from "@/components/admin-layout"
+import { AuthCallbackPage } from "@/features/auth/auth-callback-page"
 
 // One chunk per page: recharts only loads with the overview.
 const page = <K extends string>(load: () => Promise<Record<K, React.ComponentType>>, name: K) =>
@@ -22,6 +23,7 @@ export function App() {
     <BrowserRouter>
       <Suspense fallback={<Skeleton className="m-6 h-[80svh]" />}>
         <Routes>
+          <Route path="auth/callback" element={<AuthCallbackPage />} />
           <Route element={<AdminLayout />}>
             <Route index element={<OverviewPage />} />
             <Route path="users" element={<UsersPage />} />
