@@ -7,6 +7,9 @@ import "@workspace/ui/globals.css"
 import { App } from "@/App"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/lib/auth"
+import { initSentry } from "@/lib/sentry"
+
+initSentry()
 
 const root = document.getElementById("root")
 if (!root) throw new Error("index.html is missing #root")
