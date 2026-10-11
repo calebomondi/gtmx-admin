@@ -8,10 +8,11 @@ import { LoadState } from "@/components/load-state"
 import { PageShell } from "@/components/page-shell"
 import { RUN_COLUMNS } from "@/components/run-columns"
 import { adminApi } from "@/lib/api/admin"
-import { formatRelative, formatUsd } from "@/lib/format"
+import { formatDuration, formatRelative, formatUsd } from "@/lib/format"
 import { useApi } from "@/lib/use-api"
 import { QuotaEditor } from "./quota-editor"
 import { UserActions } from "./user-actions"
+import { UserActivityCard, UserConnectionsCard } from "./user-engagement"
 
 export function UserDetailPage() {
   const { userId = "" } = useParams()
@@ -42,9 +43,13 @@ export function UserDetailPage() {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {[
               ["Workspaces", user.workspaces],
+              ["Projects", user.projects],
               ["Runs", user.runs],
-              ["Last run", formatRelative(user.last_run_at)],
               ["Estimated spend", formatUsd(user.spend_usd)],
+              ["Time in app (30d)", formatDuration(user.active_seconds_30d)],
+              ["Last seen", formatRelative(user.last_seen_at)],
+              ["Last run", formatRelative(user.last_run_at)],
+              ["Connected accounts", user.connections ?? "—"],
             ].map(([label, value]) => (
               <Card key={String(label)}>
                 <CardHeader>
@@ -53,6 +58,11 @@ export function UserDetailPage() {
                 </CardHeader>
               </Card>
             ))}
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <UserActivityCard user={user} />
+            <UserConnectionsCard user={user} />
           </div>
 
           <Card>
@@ -97,8 +107,10 @@ export function UserDetailPage() {
                 {user.workspace_list.length === 0 && <p className="text-muted-foreground">No workspaces</p>}
                 {user.workspace_list.map((w) => (
                   <div key={w.id} className="flex justify-between border-b pb-2 last:border-0">
-                    <span>
-                      {w.name ?? "Untitled"} {w.archived && <span className="text-muted-foreground">(archived)</span>}
+                    <span className="flex items-center gap-2">
+                      {w.name ?? "Untitled"}
+                      {w.offer_type && <Badge variant="outline" className="capitalize">{w.offer_type}</Badge>}
+                      {w.archived && <span className="text-muted-foreground">(archived)</span>}
                     </span>
                     <span className="text-muted-foreground">
                       {w.competitors} competitors · {w.accounts} accounts · {w.runs} runs

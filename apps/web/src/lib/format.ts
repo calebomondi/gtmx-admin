@@ -31,3 +31,12 @@ export function formatRelative(iso: string | null | undefined): string {
   const days = Math.floor(hours / 24)
   return days < 30 ? `${days}d ago` : formatDateTime(iso)
 }
+
+/** A UTC day ("2026-10-11") as a short axis/tooltip label. */
+export function formatDay(day: string): string {
+  return new Date(`${day}T00:00:00Z`).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" })
+}
+
+export function formatPercent(ratio: number | null | undefined): string {
+  return ratio === null || ratio === undefined ? "—" : `${Math.round(ratio * 100)}%`
+}
