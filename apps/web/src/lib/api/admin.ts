@@ -5,7 +5,8 @@ export type RunStatus = "pending" | "running" | "awaiting_input" | "completed" |
 export const RUN_STATUSES: RunStatus[] = ["pending", "running", "awaiting_input", "completed", "failed", "cancelled"]
 export const TERMINAL_STATUSES: RunStatus[] = ["completed", "failed", "cancelled"]
 export const RUN_KINDS = [
-  "discovery", "competitors", "accounts", "competitor_research", "chat", "outreach_drafts", "monitor",
+  "discovery", "competitors", "accounts", "competitor_research", "chat", "outreach_drafts", "outreach_reply",
+  "monitor",
 ] as const
 export type RunKind = (typeof RUN_KINDS)[number]
 
