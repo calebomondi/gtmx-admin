@@ -17,6 +17,7 @@ const RunDetailPage = page(() => import("@/features/runs/run-detail-page"), "Run
 const WorkspacesPage = page(() => import("@/features/workspaces/workspaces-page"), "WorkspacesPage")
 const SignalsPage = page(() => import("@/features/signals/signals-page"), "SignalsPage")
 const AuditPage = page(() => import("@/features/audit/audit-page"), "AuditPage")
+const WaitlistPage = page(() => import("@/features/waitlist/waitlist-page"), "WaitlistPage")
 
 export function App() {
   return (
@@ -32,6 +33,7 @@ export function App() {
             <Route path="runs/:runId" element={<RunDetailPage />} />
             <Route path="workspaces" element={<WorkspacesPage />} />
             <Route path="signals" element={<SignalsPage />} />
+            <Route path="waitlist" element={<WaitlistPage />} />
             <Route path="audit" element={<AuditPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

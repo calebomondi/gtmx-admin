@@ -23,11 +23,8 @@ function withQuery(path: string, query?: Query): string {
   return qs ? `${path}?${qs}` : path
 }
 
-/** Every admin request goes through here: bearer token, JSON, typed errors. */
-export async function apiFetch<T>(
-  path: string,
-  init: RequestInit & { query?: Query } = {},
-): Promise<T> {
+/** Every admin request goes through here: bearer token and typed errors. */
+async function request(path: string, init: RequestInit & { query?: Query } = {}): Promise<Response> {
   const { query, ...rest } = init
   const token = await getAccessToken()
   const response = await fetch(`${env.apiOrigin}/api/v1/admin${withQuery(path, query)}`, {
@@ -49,6 +46,24 @@ export async function apiFetch<T>(
     }
     throw new ApiError(response.status, detail)
   }
+  return response
+}
+
+/** A JSON admin endpoint. */
+export async function apiFetch<T>(path: string, init: RequestInit & { query?: Query } = {}): Promise<T> {
+  const response = await request(path, init)
   if (response.status === 204) return undefined as T
   return (await response.json()) as T
+}
+
+/** A file from an admin endpoint (it needs the bearer token, so a plain link
+ * can't fetch it), handed to the browser to save as `filename`. */
+export async function apiDownload(path: string, filename: string, query?: Query): Promise<void> {
+  const blob = await (await request(path, { query })).blob()
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
 }

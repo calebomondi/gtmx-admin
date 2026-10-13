@@ -1,6 +1,6 @@
 import type { Engagement, Metrics } from "@/lib/api/admin"
 import { formatDuration, formatPercent, formatUsd } from "@/lib/format"
-import { StatCards } from "./stat-card"
+import { StatCards } from "@/components/stat-cards"
 
 export function MetricCards({ metrics }: { metrics: Metrics }) {
   const finished = (metrics.runs_by_status.completed ?? 0) + (metrics.runs_by_status.failed ?? 0)

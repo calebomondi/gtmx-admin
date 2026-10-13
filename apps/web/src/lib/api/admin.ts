@@ -1,5 +1,5 @@
 // Typed client for /api/v1/admin/*. Shapes mirror backend/app/schemas/admin.py.
-import { apiFetch } from "@/lib/api/http"
+import { apiDownload, apiFetch } from "@/lib/api/http"
 
 export type RunStatus = "pending" | "running" | "awaiting_input" | "completed" | "failed" | "cancelled"
 export const RUN_STATUSES: RunStatus[] = ["pending", "running", "awaiting_input", "completed", "failed", "cancelled"]
@@ -277,6 +277,43 @@ export interface PageQuery {
   per_page?: number
 }
 
+export type WaitlistStatus = "new" | "contacted" | "invited" | "onboarded"
+export const WAITLIST_STATUSES: WaitlistStatus[] = ["new", "contacted", "invited", "onboarded"]
+
+/** Mirrors backend/app/schemas/waitlist.py WaitlistSignupRow. */
+export interface WaitlistRow {
+  id: string
+  email: string
+  name: string | null
+  company: string | null
+  role: string | null
+  stage: "idea" | "pre_revenue" | "revenue" | "scaling" | null
+  sells_to: "b2b" | "b2c" | "both" | null
+  countries: string[]
+  wants_pilot: boolean
+  expectations: string | null
+  source: { utm_source?: string; utm_medium?: string; utm_campaign?: string; referrer?: string }
+  status: WaitlistStatus
+  confirmation_sent_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface WaitlistStats {
+  total: number
+  last_7_days: number
+  pilot: { total: number; taken: number; left: number }
+  by_day: { day: string; signups: number }[]
+  by_stage: Record<string, number>
+  by_sells_to: Record<string, number>
+}
+
+export interface WaitlistQuery extends PageQuery {
+  q?: string
+  pilot?: boolean
+  status?: string
+}
+
 export const adminApi = {
   me: () => apiFetch<Me>("/me"),
   metrics: (days: number) => apiFetch<Metrics>("/metrics", { query: { days } }),
@@ -304,4 +341,14 @@ export const adminApi = {
 
   signals: (q: PageQuery & { category?: string }) => apiFetch<Page<SignalRow>>("/signals", { query: { ...q } }),
   audit: (q: PageQuery & { action?: string }) => apiFetch<Page<AuditRow>>("/audit-log", { query: { ...q } }),
+
+  waitlist: ({ pilot, ...q }: WaitlistQuery) =>
+    apiFetch<Page<WaitlistRow>>("/waitlist", { query: { ...q, pilot: pilot === undefined ? undefined : String(pilot) } }),
+  waitlistStats: () => apiFetch<WaitlistStats>("/waitlist/stats"),
+  setWaitlistStatus: (id: string, status: WaitlistStatus) =>
+    apiFetch<WaitlistRow>(`/waitlist/${id}`, { method: "PATCH", body: JSON.stringify({ status }) }),
+  exportWaitlist: (filename: string, filters: { pilot?: boolean; status?: string }) =>
+    apiDownload("/waitlist/export.csv", filename, {
+      pilot: filters.pilot === undefined ? undefined : String(filters.pilot), status: filters.status,
+    }),
 }
