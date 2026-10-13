@@ -8,7 +8,7 @@ export interface Stat {
 
 export function StatCards({ stats }: { stats: Stat[] }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
       {stats.map((s) => (
         <Card key={s.label}>
           <CardHeader>
