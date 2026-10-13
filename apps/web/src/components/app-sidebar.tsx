@@ -18,6 +18,7 @@ import {
   LightningIcon,
   ScrollIcon,
   ShieldCheckIcon,
+  UserPlusIcon,
   UsersIcon,
 } from "@phosphor-icons/react"
 
@@ -30,6 +31,7 @@ const NAV = [
   { to: "/runs", label: "Runs", icon: LightningIcon },
   { to: "/workspaces", label: "Workspaces", icon: FoldersIcon },
   { to: "/signals", label: "Signals", icon: BellIcon },
+  { to: "/waitlist", label: "Waitlist", icon: UserPlusIcon },
   { to: "/audit", label: "Audit log", icon: ScrollIcon },
 ]
 
