@@ -10,6 +10,15 @@ export interface Column<T> {
   header: string
   cell: (row: T) => ReactNode
   className?: string
+  /** Drops the column below this breakpoint, so narrow screens keep the
+   * columns that identify a row instead of scrolling through all of them. */
+  hideBelow?: "sm" | "md" | "lg"
+}
+
+const HIDE_BELOW = { sm: "hidden sm:table-cell", md: "hidden md:table-cell", lg: "hidden lg:table-cell" } as const
+
+function columnClass<T>(c: Column<T>) {
+  return cn(c.hideBelow && HIDE_BELOW[c.hideBelow], c.className)
 }
 
 interface Props<T> {
@@ -42,7 +51,7 @@ export function PagedTable<T>({ columns, data, loading, error, empty, rowKey, on
           <TableHeader>
             <TableRow>
               {columns.map((c) => (
-                <TableHead key={c.header} className={c.className}>
+                <TableHead key={c.header} className={columnClass(c)}>
                   {c.header}
                 </TableHead>
               ))}
@@ -53,7 +62,7 @@ export function PagedTable<T>({ columns, data, loading, error, empty, rowKey, on
               Array.from({ length: 5 }, (_, i) => (
                 <TableRow key={i}>
                   {columns.map((c) => (
-                    <TableCell key={c.header}>
+                    <TableCell key={c.header} className={columnClass(c)}>
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
                   ))}
@@ -73,7 +82,7 @@ export function PagedTable<T>({ columns, data, loading, error, empty, rowKey, on
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
                 {columns.map((c) => (
-                  <TableCell key={c.header} className={c.className}>
+                  <TableCell key={c.header} className={columnClass(c)}>
                     {c.cell(row)}
                   </TableCell>
                 ))}

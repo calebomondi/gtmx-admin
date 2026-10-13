@@ -16,10 +16,10 @@ function Change({ value }: { value: Record<string, unknown> | null }) {
 
 const COLUMNS: Column<AuditRow>[] = [
   { header: "When", cell: (a) => formatDateTime(a.created_at) },
-  { header: "Who", cell: (a) => a.actor_email ?? "system" },
+  { header: "Who", hideBelow: "md", cell: (a) => a.actor_email ?? "system" },
   { header: "Action", cell: (a) => <span className="font-mono text-xs">{a.action}</span> },
   {
-    header: "Target",
+    header: "Target", hideBelow: "sm",
     cell: (a) => {
       if (!a.target_id) return a.target_type
       const to = a.target_type === "user" ? `/users/${a.target_id}` : a.target_type === "run" ? `/runs/${a.target_id}` : null
@@ -27,8 +27,8 @@ const COLUMNS: Column<AuditRow>[] = [
       return to ? <Link className="underline-offset-4 hover:underline" to={to}>{label}</Link> : label
     },
   },
-  { header: "Before", cell: (a) => <Change value={a.before} />, className: "max-w-64" },
-  { header: "After", cell: (a) => <Change value={a.after} />, className: "max-w-64" },
+  { header: "Before", hideBelow: "lg", cell: (a) => <Change value={a.before} />, className: "min-w-48 max-w-64 whitespace-normal" },
+  { header: "After", hideBelow: "lg", cell: (a) => <Change value={a.after} />, className: "min-w-48 max-w-64 whitespace-normal" },
 ]
 
 export function AuditPage() {

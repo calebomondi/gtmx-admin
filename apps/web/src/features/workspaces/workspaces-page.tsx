@@ -17,12 +17,12 @@ const COLUMNS: Column<WorkspaceRow>[] = [
       </span>
     ),
   },
-  { header: "Owner", cell: (w) => w.user_email ?? <span className="font-mono text-xs">{w.user_id.slice(0, 8)}</span> },
-  { header: "Competitors", cell: (w) => w.competitors, className: "text-right tabular-nums" },
-  { header: "Accounts", cell: (w) => w.accounts, className: "text-right tabular-nums" },
-  { header: "Runs", cell: (w) => w.runs, className: "text-right tabular-nums" },
-  { header: "Last activity", cell: (w) => formatRelative(w.last_activity) },
-  { header: "Created", cell: (w) => formatRelative(w.date_created) },
+  { header: "Owner", hideBelow: "md", cell: (w) => w.user_email ?? <span className="font-mono text-xs">{w.user_id.slice(0, 8)}</span> },
+  { header: "Competitors", hideBelow: "lg", cell: (w) => w.competitors, className: "text-right tabular-nums" },
+  { header: "Accounts", hideBelow: "lg", cell: (w) => w.accounts, className: "text-right tabular-nums" },
+  { header: "Runs", hideBelow: "sm", cell: (w) => w.runs, className: "text-right tabular-nums" },
+  { header: "Last activity", hideBelow: "sm", cell: (w) => formatRelative(w.last_activity) },
+  { header: "Created", hideBelow: "lg", cell: (w) => formatRelative(w.date_created) },
 ]
 
 export function WorkspacesPage() {
@@ -37,7 +37,7 @@ export function WorkspacesPage() {
       title="Workspaces"
       actions={
         <Input
-          className="w-72"
+          className="w-full sm:w-72"
           placeholder="Search workspace name"
           defaultValue={q}
           onKeyDown={(e) => e.key === "Enter" && search.set("q", e.currentTarget.value.trim())}

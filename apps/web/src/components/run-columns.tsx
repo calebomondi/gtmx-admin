@@ -6,9 +6,9 @@ import { formatDateTime, formatDuration, formatUsd } from "@/lib/format"
 export const RUN_COLUMNS: Column<RunRow>[] = [
   { header: "Kind", cell: (r) => r.kind.replaceAll("_", " ") },
   { header: "Status", cell: (r) => <StatusBadge status={r.status} /> },
-  { header: "User", cell: (r) => r.user_email ?? <span className="font-mono text-xs">{r.user_id.slice(0, 8)}</span> },
-  { header: "Workspace", cell: (r) => r.workspace_name ?? "—" },
-  { header: "Started", cell: (r) => formatDateTime(r.created_at) },
-  { header: "Duration", cell: (r) => formatDuration(r.duration_s), className: "text-right" },
-  { header: "Cost", cell: (r) => formatUsd(r.cost_usd), className: "text-right tabular-nums" },
+  { header: "User", hideBelow: "md", cell: (r) => r.user_email ?? <span className="font-mono text-xs">{r.user_id.slice(0, 8)}</span> },
+  { header: "Workspace", hideBelow: "lg", cell: (r) => r.workspace_name ?? "—" },
+  { header: "Started", hideBelow: "sm", cell: (r) => formatDateTime(r.created_at) },
+  { header: "Duration", hideBelow: "md", cell: (r) => formatDuration(r.duration_s), className: "text-right" },
+  { header: "Cost", hideBelow: "sm", cell: (r) => formatUsd(r.cost_usd), className: "text-right tabular-nums" },
 ]

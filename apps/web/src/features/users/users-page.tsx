@@ -29,13 +29,13 @@ const COLUMNS: Column<UserRow>[] = [
       </div>
     ),
   },
-  { header: "Workspaces", cell: (u) => u.workspaces, className: "text-right tabular-nums" },
-  { header: "Projects", cell: (u) => u.projects, className: "text-right tabular-nums" },
-  { header: "Runs", cell: (u) => u.runs, className: "text-right tabular-nums" },
-  { header: "Connected", cell: (u) => u.connections ?? "—", className: "text-right tabular-nums" },
-  { header: "Time (30d)", cell: (u) => formatDuration(u.active_seconds_30d), className: "text-right tabular-nums" },
-  { header: "Last seen", cell: (u) => formatRelative(u.last_seen_at) },
-  { header: "Joined", cell: (u) => formatRelative(u.created_at) },
+  { header: "Workspaces", hideBelow: "md", cell: (u) => u.workspaces, className: "text-right tabular-nums" },
+  { header: "Projects", hideBelow: "lg", cell: (u) => u.projects, className: "text-right tabular-nums" },
+  { header: "Runs", hideBelow: "md", cell: (u) => u.runs, className: "text-right tabular-nums" },
+  { header: "Connected", hideBelow: "lg", cell: (u) => u.connections ?? "—", className: "text-right tabular-nums" },
+  { header: "Time (30d)", hideBelow: "lg", cell: (u) => formatDuration(u.active_seconds_30d), className: "text-right tabular-nums" },
+  { header: "Last seen", hideBelow: "sm", cell: (u) => formatRelative(u.last_seen_at) },
+  { header: "Joined", hideBelow: "lg", cell: (u) => formatRelative(u.created_at) },
 ]
 
 export function UsersPage() {
@@ -50,7 +50,7 @@ export function UsersPage() {
       title="Users"
       actions={
         <Input
-          className="w-72"
+          className="w-full sm:w-72"
           placeholder="Search email or name"
           defaultValue={q}
           onKeyDown={(e) => e.key === "Enter" && search.set("q", e.currentTarget.value.trim())}

@@ -14,6 +14,7 @@ const CATEGORIES = ["product", "competitor", "opportunity", "outbound", "agent"]
 const COLUMNS: Column<SignalRow>[] = [
   {
     header: "Signal",
+    className: "min-w-56 max-w-md whitespace-normal",
     cell: (s) => (
       <div className="flex flex-col">
         <span className="font-medium">
@@ -23,10 +24,10 @@ const COLUMNS: Column<SignalRow>[] = [
       </div>
     ),
   },
-  { header: "Category", cell: (s) => s.category },
-  { header: "User", cell: (s) => s.user_email ?? s.user_id.slice(0, 8) },
-  { header: "Workspace", cell: (s) => s.workspace_name ?? "—" },
-  { header: "When", cell: (s) => formatRelative(s.created_at) },
+  { header: "Category", hideBelow: "sm", cell: (s) => s.category },
+  { header: "User", hideBelow: "md", cell: (s) => s.user_email ?? s.user_id.slice(0, 8) },
+  { header: "Workspace", hideBelow: "lg", cell: (s) => s.workspace_name ?? "—" },
+  { header: "When", hideBelow: "sm", cell: (s) => formatRelative(s.created_at) },
 ]
 
 export function SignalsPage() {

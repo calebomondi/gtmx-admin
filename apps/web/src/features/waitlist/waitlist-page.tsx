@@ -64,16 +64,17 @@ export function WaitlistPage() {
         </div>
       ),
     },
-    { header: "Pilot", cell: (r) => (r.wants_pilot ? <Badge>pilot</Badge> : <span className="text-muted-foreground">—</span>) },
-    { header: "Stage", cell: (r) => (r.stage ? STAGE_LABEL[r.stage] : "—") },
-    { header: "Sells to", cell: (r) => (r.sells_to ? SELLS_TO_LABEL[r.sells_to] : "—") },
-    { header: "Countries", cell: (r) => r.countries.join(", ") || "—" },
+    { header: "Pilot", hideBelow: "sm", cell: (r) => (r.wants_pilot ? <Badge>pilot</Badge> : <span className="text-muted-foreground">—</span>) },
+    { header: "Stage", hideBelow: "md", cell: (r) => (r.stage ? STAGE_LABEL[r.stage] : "—") },
+    { header: "Sells to", hideBelow: "lg", cell: (r) => (r.sells_to ? SELLS_TO_LABEL[r.sells_to] : "—") },
+    { header: "Countries", hideBelow: "md", cell: (r) => r.countries.join(", ") || "—" },
     {
-      header: "Wants GTMX to",
+      header: "Wants GTMX to", hideBelow: "lg",
+      className: "min-w-48 whitespace-normal",
       cell: (r) => <span className="line-clamp-2 max-w-72 text-sm">{r.expectations || "—"}</span>,
     },
-    { header: "From", cell: (r) => sourceLine(r.source) },
-    { header: "Joined", cell: (r) => formatRelative(r.created_at) },
+    { header: "From", hideBelow: "lg", cell: (r) => sourceLine(r.source) },
+    { header: "Joined", hideBelow: "sm", cell: (r) => formatRelative(r.created_at) },
     {
       header: "Status",
       cell: (r) => (
@@ -94,7 +95,7 @@ export function WaitlistPage() {
       actions={
         <>
           <Input
-            className="w-72"
+            className="w-full sm:w-72"
             placeholder="Search email, name or company"
             defaultValue={q}
             onKeyDown={(e) => e.key === "Enter" && search.set("q", e.currentTarget.value.trim())}

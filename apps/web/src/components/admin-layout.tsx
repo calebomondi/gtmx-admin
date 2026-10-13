@@ -8,6 +8,11 @@ import { GateMessage } from "@/features/auth/gate-message"
 import { LoginPage } from "@/features/auth/login-page"
 import { useAuth } from "@/lib/auth"
 
+// Tablets start with the offcanvas sidebar closed so tables get the width;
+// the header's trigger opens it.
+const SIDEBAR_EXPANDED_FROM = 1024
+const sidebarOpenByDefault = () => typeof window === "undefined" || window.innerWidth >= SIDEBAR_EXPANDED_FROM
+
 /** Every admin route renders through here: signed out shows the login,
  * a non-admin is turned away, only a verified admin sees the console. */
 export function AdminLayout() {
@@ -20,10 +25,11 @@ export function AdminLayout() {
   if (auth.status === "error") return <GateMessage title="Can't reach the API" detail={auth.message} />
   return (
     <SidebarProvider
+      defaultOpen={sidebarOpenByDefault()}
       style={{ "--sidebar-width": "calc(var(--spacing) * 64)", "--header-height": "calc(var(--spacing) * 12)" } as CSSProperties}
     >
       <AppSidebar variant="inset" me={auth.me} />
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <Outlet />
       </SidebarInset>
     </SidebarProvider>
