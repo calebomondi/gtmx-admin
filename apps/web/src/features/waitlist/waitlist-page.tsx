@@ -44,7 +44,7 @@ export function WaitlistPage() {
   const exportCsv = async () => {
     setExporting(true)
     try {
-      await adminApi.exportWaitlist(`gtmx-waitlist-${new Date().toISOString().slice(0, 10)}.csv`, { pilot, status })
+      await adminApi.exportWaitlist(`thalace-waitlist-${new Date().toISOString().slice(0, 10)}.csv`, { pilot, status })
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Export failed")
     } finally {
@@ -69,7 +69,7 @@ export function WaitlistPage() {
     { header: "Sells to", hideBelow: "lg", cell: (r) => (r.sells_to ? SELLS_TO_LABEL[r.sells_to] : "—") },
     { header: "Countries", hideBelow: "md", cell: (r) => r.countries.join(", ") || "—" },
     {
-      header: "Wants GTMX to", hideBelow: "lg",
+      header: "Wants Thalace to", hideBelow: "lg",
       className: "min-w-48 whitespace-normal",
       cell: (r) => <span className="line-clamp-2 max-w-72 text-sm">{r.expectations || "—"}</span>,
     },

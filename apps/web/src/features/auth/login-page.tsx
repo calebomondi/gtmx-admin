@@ -35,7 +35,7 @@ export function LoginPage() {
     <div className="flex min-h-svh items-center justify-center p-6">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>GTMX Admin</CardTitle>
+          <CardTitle>Thalace Admin</CardTitle>
           <CardDescription>Sign in with an admin account.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
