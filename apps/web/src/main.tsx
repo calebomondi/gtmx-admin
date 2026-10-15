@@ -1,14 +1,28 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
+import { Toaster } from "@workspace/ui/components/sonner"
+import { TooltipProvider } from "@workspace/ui/components/tooltip"
 
 import "@workspace/ui/globals.css"
-import { App } from "./App.tsx"
-import { ThemeProvider } from "@/components/theme-provider.tsx"
+import { App } from "@/App"
+import { ThemeProvider } from "@/components/theme-provider"
+import { AuthProvider } from "@/lib/auth"
+import { initSentry } from "@/lib/sentry"
 
-createRoot(document.getElementById("root")!).render(
+initSentry()
+
+const root = document.getElementById("root")
+if (!root) throw new Error("index.html is missing #root")
+
+createRoot(root).render(
   <StrictMode>
     <ThemeProvider>
-      <App />
+      <TooltipProvider>
+        <AuthProvider>
+          <App />
+          <Toaster />
+        </AuthProvider>
+      </TooltipProvider>
     </ThemeProvider>
-  </StrictMode>
+  </StrictMode>,
 )

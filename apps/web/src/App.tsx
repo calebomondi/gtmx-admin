@@ -1,19 +1,44 @@
-import { Button } from "@workspace/ui/components/button"
+import { lazy, Suspense } from "react"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { Skeleton } from "@workspace/ui/components/skeleton"
+
+import { AdminLayout } from "@/components/admin-layout"
+import { AuthCallbackPage } from "@/features/auth/auth-callback-page"
+
+// One chunk per page: recharts only loads with the overview.
+const page = <K extends string>(load: () => Promise<Record<K, React.ComponentType>>, name: K) =>
+  lazy(() => load().then((m) => ({ default: m[name] })))
+
+const OverviewPage = page(() => import("@/features/overview/overview-page"), "OverviewPage")
+const UsersPage = page(() => import("@/features/users/users-page"), "UsersPage")
+const UserDetailPage = page(() => import("@/features/users/user-detail-page"), "UserDetailPage")
+const RunsPage = page(() => import("@/features/runs/runs-page"), "RunsPage")
+const RunDetailPage = page(() => import("@/features/runs/run-detail-page"), "RunDetailPage")
+const WorkspacesPage = page(() => import("@/features/workspaces/workspaces-page"), "WorkspacesPage")
+const SignalsPage = page(() => import("@/features/signals/signals-page"), "SignalsPage")
+const AuditPage = page(() => import("@/features/audit/audit-page"), "AuditPage")
+const WaitlistPage = page(() => import("@/features/waitlist/waitlist-page"), "WaitlistPage")
 
 export function App() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="text-muted-foreground font-mono text-xs">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Suspense fallback={<Skeleton className="m-6 h-[80svh]" />}>
+        <Routes>
+          <Route path="auth/callback" element={<AuthCallbackPage />} />
+          <Route element={<AdminLayout />}>
+            <Route index element={<OverviewPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="users/:userId" element={<UserDetailPage />} />
+            <Route path="runs" element={<RunsPage />} />
+            <Route path="runs/:runId" element={<RunDetailPage />} />
+            <Route path="workspaces" element={<WorkspacesPage />} />
+            <Route path="signals" element={<SignalsPage />} />
+            <Route path="waitlist" element={<WaitlistPage />} />
+            <Route path="audit" element={<AuditPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   )
 }
