@@ -43,7 +43,7 @@ export function AppSidebar({ me, ...props }: ComponentProps<typeof Sidebar> & { 
           <SidebarMenuItem>
             <SidebarMenuButton className="data-[slot=sidebar-menu-button]:p-1.5!">
               <ShieldCheckIcon className="size-5!" />
-              <span className="text-base font-semibold">GTMX Admin</span>
+              <span className="text-base font-semibold">Thalace Admin</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

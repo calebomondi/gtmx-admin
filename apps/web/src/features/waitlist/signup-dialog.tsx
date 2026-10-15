@@ -15,7 +15,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   )
 }
 
-/** Everything one signup told us, including what they expect GTMX to do. */
+/** Everything one signup told us, including what they expect Thalace to do. */
 export function SignupDialog({ row, onClose }: { row: WaitlistRow | null; onClose: () => void }) {
   return (
     <Dialog open={row !== null} onOpenChange={(open) => !open && onClose()}>
@@ -41,7 +41,7 @@ export function SignupDialog({ row, onClose }: { row: WaitlistRow | null; onClos
               <Field label="Email sent">{row.confirmation_sent_at ? formatDateTime(row.confirmation_sent_at) : "not yet"}</Field>
             </div>
             <div className="flex flex-col gap-1.5 border-t pt-3">
-              <span className="text-sm text-muted-foreground">What they want GTMX to do</span>
+              <span className="text-sm text-muted-foreground">What they want Thalace to do</span>
               <p className="text-sm whitespace-pre-wrap">{row.expectations || "They didn't say."}</p>
             </div>
           </>
