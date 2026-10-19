@@ -29,8 +29,7 @@ const COLUMNS: Column<UserRow>[] = [
       </div>
     ),
   },
-  { header: "Workspaces", hideBelow: "md", cell: (u) => u.workspaces, className: "text-right tabular-nums" },
-  { header: "Projects", hideBelow: "lg", cell: (u) => u.projects, className: "text-right tabular-nums" },
+  { header: "Laces", hideBelow: "md", cell: (u) => u.laces, className: "text-right tabular-nums" },
   { header: "Runs", hideBelow: "md", cell: (u) => u.runs, className: "text-right tabular-nums" },
   { header: "Connected", hideBelow: "lg", cell: (u) => u.connections ?? "—", className: "text-right tabular-nums" },
   { header: "Time (30d)", hideBelow: "lg", cell: (u) => formatDuration(u.active_seconds_30d), className: "text-right tabular-nums" },

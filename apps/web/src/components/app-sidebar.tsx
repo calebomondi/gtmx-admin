@@ -12,9 +12,8 @@ import {
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
 import {
-  BellIcon,
   ChartLineIcon,
-  FoldersIcon,
+  ChatsCircleIcon,
   LightningIcon,
   ScrollIcon,
   ShieldCheckIcon,
@@ -30,9 +29,8 @@ const NAV = [
   { to: "/", label: "Overview", icon: ChartLineIcon, end: true },
   { to: "/users", label: "Users", icon: UsersIcon },
   { to: "/laces", label: "Laces", icon: SparkleIcon },
+  { to: "/questions", label: "Questions", icon: ChatsCircleIcon },
   { to: "/runs", label: "Runs", icon: LightningIcon },
-  { to: "/workspaces", label: "Workspaces", icon: FoldersIcon },
-  { to: "/signals", label: "Signals", icon: BellIcon },
   { to: "/waitlist", label: "Waitlist", icon: UserPlusIcon },
   { to: "/audit", label: "Audit log", icon: ScrollIcon },
 ]

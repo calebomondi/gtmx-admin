@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { Badge } from "@workspace/ui/components/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/table"
@@ -42,14 +42,14 @@ export function UserDetailPage() {
 
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {[
-              ["Workspaces", user.workspaces],
-              ["Projects", user.projects],
+              ["Laces", user.laces],
               ["Runs", user.runs],
               ["Estimated spend", formatUsd(user.spend_usd)],
               ["Time in app (30d)", formatDuration(user.active_seconds_30d)],
               ["Last seen", formatRelative(user.last_seen_at)],
               ["Last run", formatRelative(user.last_run_at)],
               ["Connected accounts", user.connections ?? "—"],
+              ["Spend per run", user.runs ? formatUsd(user.spend_usd / user.runs) : "—"],
             ].map(([label, value]) => (
               <Card key={String(label)}>
                 <CardHeader>
@@ -101,21 +101,25 @@ export function UserDetailPage() {
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Workspaces</CardTitle>
+                <CardTitle>Laces</CardTitle>
+                <CardDescription>
+                  <Link to={`/questions?user_id=${user.id}`} className="underline-offset-4 hover:underline">
+                    What they asked their Laces
+                  </Link>
+                </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-2 text-sm">
-                {user.workspace_list.length === 0 && <p className="text-muted-foreground">No workspaces</p>}
-                {user.workspace_list.map((w) => (
-                  <div key={w.id} className="flex justify-between border-b pb-2 last:border-0">
+                {user.lace_list.length === 0 && <p className="text-muted-foreground">No Laces</p>}
+                {user.lace_list.map((l) => (
+                  <Link key={l.id} to={`/laces/${l.id}`} className="flex justify-between gap-3 border-b pb-2 last:border-0 hover:underline">
                     <span className="flex items-center gap-2">
-                      {w.name ?? "Untitled"}
-                      {w.offer_type && <Badge variant="outline" className="capitalize">{w.offer_type}</Badge>}
-                      {w.archived && <span className="text-muted-foreground">(archived)</span>}
+                      {l.name}
+                      {l.status !== "active" && <span className="text-muted-foreground">({l.status})</span>}
                     </span>
                     <span className="text-muted-foreground">
-                      {w.competitors} competitors · {w.accounts} accounts · {w.runs} runs
+                      {l.competitors} competitors · {l.accounts} accounts · {l.runs} runs
                     </span>
-                  </div>
+                  </Link>
                 ))}
               </CardContent>
             </Card>

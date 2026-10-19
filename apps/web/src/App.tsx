@@ -16,8 +16,7 @@ const LacesPage = page(() => import("@/features/laces/laces-page"), "LacesPage")
 const LaceDetailPage = page(() => import("@/features/laces/lace-detail-page"), "LaceDetailPage")
 const RunsPage = page(() => import("@/features/runs/runs-page"), "RunsPage")
 const RunDetailPage = page(() => import("@/features/runs/run-detail-page"), "RunDetailPage")
-const WorkspacesPage = page(() => import("@/features/workspaces/workspaces-page"), "WorkspacesPage")
-const SignalsPage = page(() => import("@/features/signals/signals-page"), "SignalsPage")
+const QuestionsPage = page(() => import("@/features/questions/questions-page"), "QuestionsPage")
 const AuditPage = page(() => import("@/features/audit/audit-page"), "AuditPage")
 const WaitlistPage = page(() => import("@/features/waitlist/waitlist-page"), "WaitlistPage")
 
@@ -35,8 +34,7 @@ export function App() {
             <Route path="laces/:laceId" element={<LaceDetailPage />} />
             <Route path="runs" element={<RunsPage />} />
             <Route path="runs/:runId" element={<RunDetailPage />} />
-            <Route path="workspaces" element={<WorkspacesPage />} />
-            <Route path="signals" element={<SignalsPage />} />
+            <Route path="questions" element={<QuestionsPage />} />
             <Route path="waitlist" element={<WaitlistPage />} />
             <Route path="audit" element={<AuditPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -71,40 +71,40 @@ export interface Metrics {
   api_costs: CostLine[]
   unpriced: string[]
   series: DayMetrics[]
-  discovery_p50_s: number | null
-  discovery_p90_s: number | null
+  onboarding_p50_s: number | null
+  onboarding_p90_s: number | null
   spend_per_active_user_usd: number | null
-  cost_per_completed_discovery_usd: number | null
+  cost_per_onboarded_lace_usd: number | null
   top_spenders: UserSpend[]
 }
-
-export type OfferType = "product" | "service"
 
 export interface EngagementDay {
   day: string
   new_users: number
   active_users: number
   active_seconds: number
-  workspaces_created: number
-  products_created: number
-  services_created: number
-  projects_created: number
-  workspaces_interacted: number
-  chat_messages: number
+  laces_created: number
+  onboardings_completed: number
+  onboardings_failed: number
+  /** Laces with any run that day. */
+  laces_active: number
+  /** Messages founders sent their Laces. */
+  questions: number
   competitor_runs: number
   account_runs: number
   outreach_drafted: number
   outreach_sent: number
 }
 
-export interface TopWorkspace {
+export interface TopLace {
   id: string
-  name: string | null
+  name: string
   user_id: string
   user_email: string | null
-  offer_type: OfferType | null
-  active_seconds: number
-  visits: number
+  /** Runs in the window. */
+  runs: number
+  /** Feed items in the window. */
+  activity: number
 }
 
 export interface Engagement {
@@ -120,14 +120,11 @@ export interface Engagement {
   total_active_seconds: number
   avg_active_seconds_per_user: number | null
   avg_session_seconds: number | null
-  workspaces_total: number
-  workspaces_created: number
-  projects_total: number
-  projects_created: number
-  avg_workspaces_per_user: number | null
-  avg_projects_per_user: number | null
-  offer_types: Record<OfferType | "unknown", number>
-  top_workspaces: TopWorkspace[]
+  laces_total: number
+  laces_created: number
+  avg_laces_per_user: number | null
+  questions: number
+  top_laces: TopLace[]
   series: EngagementDay[]
 }
 
@@ -140,9 +137,9 @@ export interface FunnelStep {
 export interface Funnel {
   days: number
   steps: FunnelStep[]
-  discoveries_started: number
-  discoveries_completed: number
-  interview_dropoffs: { question: string; runs: number }[]
+  laces_created: number
+  onboardings_completed: number
+  onboardings_failed: number
   failure_reasons: { message: string; runs: number; last_at: string }[]
 }
 
@@ -169,8 +166,7 @@ export interface UserRow {
   last_sign_in_at: string | null
   is_admin: boolean
   suspended: boolean
-  workspaces: number
-  projects: number
+  laces: number
   runs: number
   last_run_at: string | null
   last_seen_at: string | null
@@ -211,20 +207,6 @@ export interface LaceDetail extends LaceRow {
   brief_frequency: "off" | "daily" | "weekly"
   brief_email: boolean
   recent_runs: RunRow[]
-}
-
-export interface WorkspaceRow {
-  id: string
-  name: string | null
-  offer_type: OfferType | null
-  user_id: string
-  user_email: string | null
-  archived: boolean
-  date_created: string
-  last_activity: string
-  competitors: number
-  accounts: number
-  runs: number
 }
 
 export interface RunRow {
@@ -271,25 +253,24 @@ export interface UserConnection {
 export interface UserDetail extends UserRow {
   spend_usd: number
   recent_runs: RunRow[]
-  workspace_list: WorkspaceRow[]
+  lace_list: LaceRow[]
   connection_list: UserConnection[]
   connections_error: string | null
   activity: { day: string; active_seconds: number }[]
-  top_workspaces: TopWorkspace[]
+  top_laces: TopLace[]
 }
 
-export interface SignalRow {
-  id: string
-  workspace_id: string
-  workspace_name: string | null
-  run_id: string | null
-  category: string
-  title: string
-  summary: string
-  hot: boolean
-  created_at: string
+/** A message a founder sent their Lace. Mirrors AdminQuestionRow. */
+export interface QuestionRow {
+  run_id: string
   user_id: string
   user_email: string | null
+  lace_id: string | null
+  lace_name: string | null
+  text: string
+  /** How the Lace's turn on it ended, or that it is still running. */
+  status: RunStatus
+  created_at: string
 }
 
 export interface QuotaRow {
@@ -370,8 +351,6 @@ export const adminApi = {
   setQuota: (id: string, kind: string, daily_cap: number | null) =>
     apiFetch<QuotaRow[]>(`/users/${id}/quotas`, { method: "PUT", body: JSON.stringify({ kind, daily_cap }) }),
 
-  workspaces: (q: PageQuery & { q?: string }) => apiFetch<Page<WorkspaceRow>>("/workspaces", { query: { ...q } }),
-
   laces: (q: PageQuery & { q?: string; user_id?: string }) => apiFetch<Page<LaceRow>>("/laces", { query: { ...q } }),
   lace: (id: string) => apiFetch<LaceDetail>(`/laces/${id}`),
 
@@ -380,7 +359,8 @@ export const adminApi = {
   run: (id: string) => apiFetch<RunDetail>(`/runs/${id}`),
   cancelRun: (id: string) => apiFetch<RunDetail>(`/runs/${id}/cancel`, { method: "POST" }),
 
-  signals: (q: PageQuery & { category?: string }) => apiFetch<Page<SignalRow>>("/signals", { query: { ...q } }),
+  questions: (q: PageQuery & { q?: string; user_id?: string; lace_id?: string }) =>
+    apiFetch<Page<QuestionRow>>("/questions", { query: { ...q } }),
   audit: (q: PageQuery & { action?: string }) => apiFetch<Page<AuditRow>>("/audit-log", { query: { ...q } }),
 
   waitlist: ({ pilot, ...q }: WaitlistQuery) =>
