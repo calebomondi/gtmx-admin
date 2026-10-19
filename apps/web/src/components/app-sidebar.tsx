@@ -18,6 +18,7 @@ import {
   LightningIcon,
   ScrollIcon,
   ShieldCheckIcon,
+  SparkleIcon,
   UserPlusIcon,
   UsersIcon,
 } from "@phosphor-icons/react"
@@ -28,6 +29,7 @@ import type { Me } from "@/lib/api/admin"
 const NAV = [
   { to: "/", label: "Overview", icon: ChartLineIcon, end: true },
   { to: "/users", label: "Users", icon: UsersIcon },
+  { to: "/laces", label: "Laces", icon: SparkleIcon },
   { to: "/runs", label: "Runs", icon: LightningIcon },
   { to: "/workspaces", label: "Workspaces", icon: FoldersIcon },
   { to: "/signals", label: "Signals", icon: BellIcon },

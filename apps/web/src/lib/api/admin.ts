@@ -6,7 +6,8 @@ export const RUN_STATUSES: RunStatus[] = ["pending", "running", "awaiting_input"
 export const TERMINAL_STATUSES: RunStatus[] = ["completed", "failed", "cancelled"]
 export const RUN_KINDS = [
   "discovery", "competitors", "accounts", "competitor_research", "chat", "outreach_drafts", "outreach_reply",
-  "monitor",
+  "monitor", "lace_onboarding", "lace_turn", "lace_competitors", "lace_monitor", "lace_accounts", "lace_contacts",
+  "lace_drafts", "lace_reply", "lace_opportunities",
 ] as const
 export type RunKind = (typeof RUN_KINDS)[number]
 
@@ -177,6 +178,41 @@ export interface UserRow {
   connections: number | null
 }
 
+/** Mirrors backend/app/schemas/admin.py AdminLaceRow. */
+export interface LaceRow {
+  id: string
+  name: string
+  website: string
+  startup_name: string | null
+  status: "onboarding" | "active" | "archived"
+  user_id: string
+  user_email: string | null
+  created_at: string
+  last_active_at: string
+  facts: number
+  /** Saved (tracked). */
+  competitors: number
+  /** Saved targets. */
+  accounts: number
+  contacts: number
+  /** Outreach messages sent. */
+  sent: number
+  runs: number
+  /** All its runs; null when any usage is unpriced. */
+  cost_usd: number | null
+}
+
+/** Mirrors AdminLaceDetail. */
+export interface LaceDetail extends LaceRow {
+  suggestions: number
+  drafts_waiting: number
+  replies: number
+  opportunities: number
+  brief_frequency: "off" | "daily" | "weekly"
+  brief_email: boolean
+  recent_runs: RunRow[]
+}
+
 export interface WorkspaceRow {
   id: string
   name: string | null
@@ -199,6 +235,8 @@ export interface RunRow {
   user_email: string | null
   workspace_id: string | null
   workspace_name: string | null
+  lace_id: string | null
+  lace_name: string | null
   error: string | null
   created_at: string
   started_at: string | null
@@ -334,7 +372,10 @@ export const adminApi = {
 
   workspaces: (q: PageQuery & { q?: string }) => apiFetch<Page<WorkspaceRow>>("/workspaces", { query: { ...q } }),
 
-  runs: (q: PageQuery & { status?: string; kind?: string; user_id?: string }) =>
+  laces: (q: PageQuery & { q?: string; user_id?: string }) => apiFetch<Page<LaceRow>>("/laces", { query: { ...q } }),
+  lace: (id: string) => apiFetch<LaceDetail>(`/laces/${id}`),
+
+  runs: (q: PageQuery & { status?: string; kind?: string; user_id?: string; lace_id?: string }) =>
     apiFetch<Page<RunRow>>("/runs", { query: { ...q } }),
   run: (id: string) => apiFetch<RunDetail>(`/runs/${id}`),
   cancelRun: (id: string) => apiFetch<RunDetail>(`/runs/${id}/cancel`, { method: "POST" }),
