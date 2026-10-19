@@ -215,8 +215,6 @@ export interface RunRow {
   status: RunStatus
   user_id: string
   user_email: string | null
-  workspace_id: string | null
-  workspace_name: string | null
   lace_id: string | null
   lace_name: string | null
   error: string | null

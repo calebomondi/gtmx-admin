@@ -45,7 +45,6 @@ export function RunDetailPage() {
                 <Link className="underline-offset-4 hover:underline" to={`/users/${run.user_id}`}>
                   {run.user_email ?? run.user_id}
                 </Link>
-                {run.workspace_name && ` · ${run.workspace_name}`}
                 {run.lace_id && (
                   <> · <Link className="underline-offset-4 hover:underline" to={`/laces/${run.lace_id}`}>{run.lace_name}</Link></>
                 )}{" "}· started {formatDateTime(run.created_at)} · took{" "}
