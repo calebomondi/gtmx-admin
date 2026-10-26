@@ -12,10 +12,14 @@ const page = <K extends string>(load: () => Promise<Record<K, React.ComponentTyp
 const OverviewPage = page(() => import("@/features/overview/overview-page"), "OverviewPage")
 const UsersPage = page(() => import("@/features/users/users-page"), "UsersPage")
 const UserDetailPage = page(() => import("@/features/users/user-detail-page"), "UserDetailPage")
+const LacesPage = page(() => import("@/features/laces/laces-page"), "LacesPage")
+const LaceDetailPage = page(() => import("@/features/laces/lace-detail-page"), "LaceDetailPage")
 const RunsPage = page(() => import("@/features/runs/runs-page"), "RunsPage")
 const RunDetailPage = page(() => import("@/features/runs/run-detail-page"), "RunDetailPage")
-const WorkspacesPage = page(() => import("@/features/workspaces/workspaces-page"), "WorkspacesPage")
-const SignalsPage = page(() => import("@/features/signals/signals-page"), "SignalsPage")
+const QuestionsPage = page(() => import("@/features/questions/questions-page"), "QuestionsPage")
+const EventsPage = page(() => import("@/features/events/events-page"), "EventsPage")
+const PilotAccessPage = page(() => import("@/features/pilot/pilot-access-page"), "PilotAccessPage")
+const FeedbackPage = page(() => import("@/features/feedback/feedback-page"), "FeedbackPage")
 const AuditPage = page(() => import("@/features/audit/audit-page"), "AuditPage")
 const WaitlistPage = page(() => import("@/features/waitlist/waitlist-page"), "WaitlistPage")
 
@@ -29,11 +33,15 @@ export function App() {
             <Route index element={<OverviewPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="users/:userId" element={<UserDetailPage />} />
+            <Route path="laces" element={<LacesPage />} />
+            <Route path="laces/:laceId" element={<LaceDetailPage />} />
             <Route path="runs" element={<RunsPage />} />
             <Route path="runs/:runId" element={<RunDetailPage />} />
-            <Route path="workspaces" element={<WorkspacesPage />} />
-            <Route path="signals" element={<SignalsPage />} />
+            <Route path="questions" element={<QuestionsPage />} />
+            <Route path="events" element={<EventsPage />} />
+            <Route path="feedback" element={<FeedbackPage />} />
             <Route path="waitlist" element={<WaitlistPage />} />
+            <Route path="pilot" element={<PilotAccessPage />} />
             <Route path="audit" element={<AuditPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

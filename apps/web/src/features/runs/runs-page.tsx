@@ -14,7 +14,7 @@ export function RunsPage() {
   const status = search.get("status")
   const kind = search.get("kind")
   const { data, error, loading, reload } = useApi(`runs:${search.key}`, () =>
-    adminApi.runs({ page: search.page, status, kind, user_id: search.get("user_id") }),
+    adminApi.runs({ page: search.page, status, kind, user_id: search.get("user_id"), lace_id: search.get("lace_id") }),
   )
   return (
     <PageShell

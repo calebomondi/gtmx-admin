@@ -37,14 +37,14 @@ export function EngagementCards({ engagement: e }: { engagement: Engagement }) {
           note: `${formatDuration(e.avg_active_seconds_per_user)} per user · ${formatDuration(e.avg_session_seconds)} per session`,
         },
         {
-          label: "Workspaces",
-          value: String(e.workspaces_total),
-          note: `${e.workspaces_created} new · ${perUser(e.avg_workspaces_per_user)} per user`,
+          label: "Laces",
+          value: String(e.laces_total),
+          note: `${e.laces_created} new · ${perUser(e.avg_laces_per_user)} per user`,
         },
         {
-          label: "Projects",
-          value: String(e.projects_total),
-          note: `${e.projects_created} new · ${perUser(e.avg_projects_per_user)} per user`,
+          label: "Questions",
+          value: String(e.questions),
+          note: "messages founders sent their Laces",
         },
       ]}
     />
