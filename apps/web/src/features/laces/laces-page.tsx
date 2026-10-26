@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom"
+import { Badge } from "@workspace/ui/components/badge"
 import { Input } from "@workspace/ui/components/input"
 
+import { FilterSelect } from "@/components/filter-select"
 import { PageShell } from "@/components/page-shell"
 import { PagedTable, type Column } from "@/components/paged-table"
 import { StatusBadge } from "@/components/status-badge"
@@ -9,12 +11,17 @@ import { formatRelative, formatUsd } from "@/lib/format"
 import { useApi } from "@/lib/use-api"
 import { useSearchState } from "@/lib/use-search-state"
 
+const CLASH_FILTER = ["duplicates only"] as const
+
 const COLUMNS: Column<LaceRow>[] = [
   {
     header: "Lace",
     cell: (l) => (
       <span className="flex flex-col">
-        <span>{l.name}</span>
+        <span className="flex items-center gap-2">
+          {l.name}
+          {l.domain_clash && <Badge variant="secondary">shares domain</Badge>}
+        </span>
         <span className="text-xs text-muted-foreground">{l.startup_name ?? l.website}</span>
       </span>
     ),
@@ -34,19 +41,23 @@ export function LacesPage() {
   const navigate = useNavigate()
   const search = useSearchState()
   const q = search.get("q")
+  const clashFilter = search.get("clash")
   const { data, error, loading, reload } = useApi(`laces:${search.key}`, () =>
-    adminApi.laces({ page: search.page, q, user_id: search.get("user_id") }),
+    adminApi.laces({ page: search.page, q, user_id: search.get("user_id"), clash: clashFilter ? true : undefined }),
   )
   return (
     <PageShell
       title="Laces"
       actions={
-        <Input
-          className="w-full sm:w-72"
-          placeholder="Search name, website or startup"
-          defaultValue={q}
-          onKeyDown={(e) => e.key === "Enter" && search.set("q", e.currentTarget.value.trim())}
-        />
+        <>
+          <Input
+            className="w-full sm:w-72"
+            placeholder="Search name, website or startup"
+            defaultValue={q}
+            onKeyDown={(e) => e.key === "Enter" && search.set("q", e.currentTarget.value.trim())}
+          />
+          <FilterSelect label="Laces" value={clashFilter} options={CLASH_FILTER} onChange={(v) => search.set("clash", v)} />
+        </>
       }
     >
       <PagedTable
@@ -54,7 +65,7 @@ export function LacesPage() {
         data={data}
         loading={loading}
         error={error}
-        empty={q ? "No Laces match that search" : "No Laces yet"}
+        empty={q || clashFilter ? "No Laces match these filters" : "No Laces yet"}
         rowKey={(l) => l.id}
         onRowClick={(l) => navigate(`/laces/${l.id}`)}
         onPage={(p) => search.set("page", p)}
