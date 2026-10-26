@@ -322,6 +322,8 @@ export interface PilotAccessRow {
   created_at: string
   /** An account exists for this email. */
   signed_up: boolean
+}
+
 export type FeedbackStatus = "new" | "read"
 export const FEEDBACK_STATUSES: FeedbackStatus[] = ["new", "read"]
 
