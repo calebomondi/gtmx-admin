@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { adminApi } from "@/lib/api/admin"
 import { formatCount, formatDateTime, formatRelative, formatUsd } from "@/lib/format"
 import { useApi } from "@/lib/use-api"
+import { DomainClashCard } from "./domain-clash-card"
 
 /** One Lace: whose it is, how far it has got, what waits on its founder,
  * and its recent runs with their cost. */
@@ -41,6 +42,7 @@ export function LaceDetailPage() {
               {lace.brief_frequency}{lace.brief_email && " by email"}
             </p>
           </div>
+          {lace.domain_clash && <DomainClashCard lace={lace} onChanged={reload} />}
           <StatCards
             stats={[
               { label: "Cost", value: formatUsd(lace.cost_usd), note: `${formatCount(lace.runs)} runs` },
