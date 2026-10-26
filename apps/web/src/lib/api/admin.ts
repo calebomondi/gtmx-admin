@@ -313,6 +313,24 @@ export interface PageQuery {
 export type WaitlistStatus = "new" | "contacted" | "invited" | "onboarded"
 export const WAITLIST_STATUSES: WaitlistStatus[] = ["new", "contacted", "invited", "onboarded"]
 
+export type FeedbackStatus = "new" | "read"
+export const FEEDBACK_STATUSES: FeedbackStatus[] = ["new", "read"]
+
+/** What a user sent from the app's feedback button. Mirrors AdminFeedbackRow. */
+export interface FeedbackRow {
+  id: string
+  user_id: string
+  email: string | null
+  lace_id: string | null
+  lace_name: string | null
+  /** The page they were on. */
+  path: string | null
+  text: string
+  status: FeedbackStatus
+  created_at: string
+  read_at: string | null
+}
+
 /** Mirrors backend/app/schemas/waitlist.py WaitlistSignupRow. */
 export interface WaitlistRow {
   id: string
@@ -378,6 +396,10 @@ export const adminApi = {
 
   questions: (q: PageQuery & { q?: string; user_id?: string; lace_id?: string }) =>
     apiFetch<Page<QuestionRow>>("/questions", { query: { ...q } }),
+  feedback: (q: PageQuery & { q?: string; status?: FeedbackStatus }) =>
+    apiFetch<Page<FeedbackRow>>("/feedback", { query: { ...q } }),
+  setFeedbackStatus: (id: string, status: FeedbackStatus) =>
+    apiFetch<FeedbackRow>(`/feedback/${id}`, { method: "PATCH", body: JSON.stringify({ status }) }),
   audit: (q: PageQuery & { action?: string }) => apiFetch<Page<AuditRow>>("/audit-log", { query: { ...q } }),
 
   waitlist: ({ pilot, ...q }: WaitlistQuery) =>
