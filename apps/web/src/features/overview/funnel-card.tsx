@@ -4,9 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { Funnel } from "@/lib/api/admin"
 import { formatPercent, formatRelative } from "@/lib/format"
 
-/** "product_service_description_confirmation" -> "Product service description confirmation". */
-const humanize = (key: string) => key.charAt(0).toUpperCase() + key.slice(1).replaceAll("_", " ")
-
 /** How far users get, as a share of everyone who signed up. */
 export function FunnelCard({ funnel }: { funnel: Funnel }) {
   const signedUp = funnel.steps[0]?.users ?? 0
@@ -42,28 +39,20 @@ export function FunnelCard({ funnel }: { funnel: Funnel }) {
   )
 }
 
-/** Where discovery interviews are abandoned, and why runs fail. */
-export function DropOffCard({ funnel }: { funnel: Funnel }) {
-  const { discoveries_started: started, discoveries_completed: completed } = funnel
+/** How Lace onboardings end, and why runs fail. */
+export function FailuresCard({ funnel }: { funnel: Funnel }) {
+  const { onboardings_completed: completed, onboardings_failed: failed } = funnel
+  const finished = completed + failed
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Drop-off and failures</CardTitle>
+        <CardTitle>Failures</CardTitle>
         <CardDescription>
-          {started} discoveries started in this window, {completed} finished ({started ? formatPercent(completed / started) : "—"})
+          {funnel.laces_created} Laces created in this window; {completed} of {finished} finished onboardings succeeded
+          ({finished ? formatPercent(completed / finished) : "—"})
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-medium">Interviews abandoned at</h3>
-          {funnel.interview_dropoffs.length === 0 && <p className="text-sm text-muted-foreground">No abandoned interviews</p>}
-          {funnel.interview_dropoffs.map((d) => (
-            <div key={d.question} className="flex justify-between text-sm">
-              <span>{humanize(d.question)}</span>
-              <span className="tabular-nums text-muted-foreground">{d.runs}</span>
-            </div>
-          ))}
-        </div>
         <Table>
           <TableHeader>
             <TableRow>

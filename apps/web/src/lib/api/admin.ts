@@ -6,7 +6,8 @@ export const RUN_STATUSES: RunStatus[] = ["pending", "running", "awaiting_input"
 export const TERMINAL_STATUSES: RunStatus[] = ["completed", "failed", "cancelled"]
 export const RUN_KINDS = [
   "discovery", "competitors", "accounts", "competitor_research", "chat", "outreach_drafts", "outreach_reply",
-  "monitor",
+  "monitor", "lace_onboarding", "lace_turn", "lace_competitors", "lace_monitor", "lace_accounts", "lace_contacts",
+  "lace_drafts", "lace_reply", "lace_opportunities",
 ] as const
 export type RunKind = (typeof RUN_KINDS)[number]
 
@@ -70,40 +71,40 @@ export interface Metrics {
   api_costs: CostLine[]
   unpriced: string[]
   series: DayMetrics[]
-  discovery_p50_s: number | null
-  discovery_p90_s: number | null
+  onboarding_p50_s: number | null
+  onboarding_p90_s: number | null
   spend_per_active_user_usd: number | null
-  cost_per_completed_discovery_usd: number | null
+  cost_per_onboarded_lace_usd: number | null
   top_spenders: UserSpend[]
 }
-
-export type OfferType = "product" | "service"
 
 export interface EngagementDay {
   day: string
   new_users: number
   active_users: number
   active_seconds: number
-  workspaces_created: number
-  products_created: number
-  services_created: number
-  projects_created: number
-  workspaces_interacted: number
-  chat_messages: number
+  laces_created: number
+  onboardings_completed: number
+  onboardings_failed: number
+  /** Laces with any run that day. */
+  laces_active: number
+  /** Messages founders sent their Laces. */
+  questions: number
   competitor_runs: number
   account_runs: number
   outreach_drafted: number
   outreach_sent: number
 }
 
-export interface TopWorkspace {
+export interface TopLace {
   id: string
-  name: string | null
+  name: string
   user_id: string
   user_email: string | null
-  offer_type: OfferType | null
-  active_seconds: number
-  visits: number
+  /** Runs in the window. */
+  runs: number
+  /** Feed items in the window. */
+  activity: number
 }
 
 export interface Engagement {
@@ -119,14 +120,11 @@ export interface Engagement {
   total_active_seconds: number
   avg_active_seconds_per_user: number | null
   avg_session_seconds: number | null
-  workspaces_total: number
-  workspaces_created: number
-  projects_total: number
-  projects_created: number
-  avg_workspaces_per_user: number | null
-  avg_projects_per_user: number | null
-  offer_types: Record<OfferType | "unknown", number>
-  top_workspaces: TopWorkspace[]
+  laces_total: number
+  laces_created: number
+  avg_laces_per_user: number | null
+  questions: number
+  top_laces: TopLace[]
   series: EngagementDay[]
 }
 
@@ -139,9 +137,9 @@ export interface FunnelStep {
 export interface Funnel {
   days: number
   steps: FunnelStep[]
-  discoveries_started: number
-  discoveries_completed: number
-  interview_dropoffs: { question: string; runs: number }[]
+  laces_created: number
+  onboardings_completed: number
+  onboardings_failed: number
   failure_reasons: { message: string; runs: number; last_at: string }[]
 }
 
@@ -168,8 +166,7 @@ export interface UserRow {
   last_sign_in_at: string | null
   is_admin: boolean
   suspended: boolean
-  workspaces: number
-  projects: number
+  laces: number
   runs: number
   last_run_at: string | null
   last_seen_at: string | null
@@ -177,18 +174,55 @@ export interface UserRow {
   connections: number | null
 }
 
-export interface WorkspaceRow {
+/** Mirrors backend/app/schemas/admin.py AdminLaceRow. */
+export interface LaceRow {
   id: string
-  name: string | null
-  offer_type: OfferType | null
+  name: string
+  website: string
+  startup_name: string | null
+  status: "onboarding" | "active" | "archived"
   user_id: string
   user_email: string | null
-  archived: boolean
-  date_created: string
-  last_activity: string
+  created_at: string
+  /** Shares its domain with an older Lace, which holds it. */
+  domain_clash: boolean
+  last_active_at: string
+  facts: number
+  /** Saved (tracked). */
   competitors: number
+  /** Saved targets. */
   accounts: number
+  contacts: number
+  /** Outreach messages sent. */
+  sent: number
   runs: number
+  /** All its runs; null when any usage is unpriced. */
+  cost_usd: number | null
+}
+
+/** Mirrors AdminLaceDetail. */
+export interface LaceDetail extends LaceRow {
+  suggestions: number
+  drafts_waiting: number
+  replies: number
+  opportunities: number
+  brief_frequency: "off" | "daily" | "weekly"
+  brief_email: boolean
+  recent_runs: RunRow[]
+  /** Its website's domain, when it holds it. */
+  domain: string | null
+  /** For a duplicate: the Lace holding its domain. */
+  clashes_with: LaceHolder | null
+}
+
+/** Mirrors AdminLaceHolder. */
+export interface LaceHolder {
+  id: string
+  name: string
+  status: LaceRow["status"]
+  user_id: string
+  user_email: string | null
+  created_at: string
 }
 
 export interface RunRow {
@@ -197,8 +231,8 @@ export interface RunRow {
   status: RunStatus
   user_id: string
   user_email: string | null
-  workspace_id: string | null
-  workspace_name: string | null
+  lace_id: string | null
+  lace_name: string | null
   error: string | null
   created_at: string
   started_at: string | null
@@ -233,25 +267,24 @@ export interface UserConnection {
 export interface UserDetail extends UserRow {
   spend_usd: number
   recent_runs: RunRow[]
-  workspace_list: WorkspaceRow[]
+  lace_list: LaceRow[]
   connection_list: UserConnection[]
   connections_error: string | null
   activity: { day: string; active_seconds: number }[]
-  top_workspaces: TopWorkspace[]
+  top_laces: TopLace[]
 }
 
-export interface SignalRow {
-  id: string
-  workspace_id: string
-  workspace_name: string | null
-  run_id: string | null
-  category: string
-  title: string
-  summary: string
-  hot: boolean
-  created_at: string
+/** A message a founder sent their Lace. Mirrors AdminQuestionRow. */
+export interface QuestionRow {
+  run_id: string
   user_id: string
   user_email: string | null
+  lace_id: string | null
+  lace_name: string | null
+  text: string
+  /** How the Lace's turn on it ended, or that it is still running. */
+  status: RunStatus
+  created_at: string
 }
 
 export interface QuotaRow {
@@ -279,6 +312,68 @@ export interface PageQuery {
 
 export type WaitlistStatus = "new" | "contacted" | "invited" | "onboarded"
 export const WAITLIST_STATUSES: WaitlistStatus[] = ["new", "contacted", "invited", "onboarded"]
+
+/** Mirrors backend/app/schemas/events.py EventName. */
+export type EventName =
+  | "page_viewed"
+  | "setup_phase"
+  | "lace_settings_opened"
+  | "lace_people_opened"
+  | "chat_thread_switched"
+  | "quick_ask_used"
+  | "contact_opened"
+  | "search_opened"
+  | "feedback_opened"
+
+/** One thing a user did in the app. Mirrors AdminEventRow. */
+export interface EventRow {
+  id: number
+  user_id: string
+  user_email: string | null
+  lace_id: string | null
+  lace_name: string | null
+  name: EventName
+  detail: string | null
+  created_at: string
+}
+
+/** Mirrors EventSummary. */
+export interface EventSummary {
+  days: number
+  /** Distinct people with any event in the window. */
+  people: number
+  totals: { name: EventName; detail: string | null; count: number; users: number }[]
+  per_day: { day: string; count: number; users: number }[]
+}
+
+/** An email let into the closed pilot. Mirrors backend/app/schemas/pilot.py PilotAccessRow. */
+export interface PilotAccessRow {
+  id: string
+  email: string
+  source: "admin" | "waitlist"
+  granted_by_email: string | null
+  created_at: string
+  /** An account exists for this email. */
+  signed_up: boolean
+}
+
+export type FeedbackStatus = "new" | "read"
+export const FEEDBACK_STATUSES: FeedbackStatus[] = ["new", "read"]
+
+/** What a user sent from the app's feedback button. Mirrors AdminFeedbackRow. */
+export interface FeedbackRow {
+  id: string
+  user_id: string
+  email: string | null
+  lace_id: string | null
+  lace_name: string | null
+  /** The page they were on. */
+  path: string | null
+  text: string
+  status: FeedbackStatus
+  created_at: string
+  read_at: string | null
+}
 
 /** Mirrors backend/app/schemas/waitlist.py WaitlistSignupRow. */
 export interface WaitlistRow {
@@ -332,14 +427,32 @@ export const adminApi = {
   setQuota: (id: string, kind: string, daily_cap: number | null) =>
     apiFetch<QuotaRow[]>(`/users/${id}/quotas`, { method: "PUT", body: JSON.stringify({ kind, daily_cap }) }),
 
-  workspaces: (q: PageQuery & { q?: string }) => apiFetch<Page<WorkspaceRow>>("/workspaces", { query: { ...q } }),
+  laces: ({ clash, ...q }: PageQuery & { q?: string; user_id?: string; clash?: boolean }) =>
+    apiFetch<Page<LaceRow>>("/laces", { query: { ...q, clash: clash === undefined ? undefined : String(clash) } }),
+  lace: (id: string) => apiFetch<LaceDetail>(`/laces/${id}`),
+  foldLace: (id: string) => apiFetch<LaceDetail>(`/laces/${id}/fold`, { method: "POST" }),
+  takeLaceDomain: (id: string) => apiFetch<LaceDetail>(`/laces/${id}/take-domain`, { method: "POST" }),
 
-  runs: (q: PageQuery & { status?: string; kind?: string; user_id?: string }) =>
+  runs: (q: PageQuery & { status?: string; kind?: string; user_id?: string; lace_id?: string }) =>
     apiFetch<Page<RunRow>>("/runs", { query: { ...q } }),
   run: (id: string) => apiFetch<RunDetail>(`/runs/${id}`),
   cancelRun: (id: string) => apiFetch<RunDetail>(`/runs/${id}/cancel`, { method: "POST" }),
 
-  signals: (q: PageQuery & { category?: string }) => apiFetch<Page<SignalRow>>("/signals", { query: { ...q } }),
+  questions: (q: PageQuery & { q?: string; user_id?: string; lace_id?: string }) =>
+    apiFetch<Page<QuestionRow>>("/questions", { query: { ...q } }),
+  eventSummary: (q: { days: number; user_id?: string; lace_id?: string }) =>
+    apiFetch<EventSummary>("/events/summary", { query: { ...q } }),
+  events: (q: PageQuery & { user_id?: string; lace_id?: string }) => apiFetch<Page<EventRow>>("/events", { query: { ...q } }),
+  pilotStatus: () => apiFetch<{ invite_only: boolean }>("/pilot-access/status"),
+  pilotAccess: (q: PageQuery & { q?: string }) => apiFetch<Page<PilotAccessRow>>("/pilot-access", { query: { ...q } }),
+  addPilotAccess: (emails: string[]) =>
+    apiFetch<{ added: number }>("/pilot-access", { method: "POST", body: JSON.stringify({ emails }) }),
+  removePilotAccess: (id: string) => apiFetch<void>(`/pilot-access/${id}`, { method: "DELETE" }),
+  approveWaitlistSignup: (id: string) => apiFetch<WaitlistRow>(`/waitlist/${id}/approve`, { method: "POST" }),
+  feedback: (q: PageQuery & { q?: string; status?: FeedbackStatus }) =>
+    apiFetch<Page<FeedbackRow>>("/feedback", { query: { ...q } }),
+  setFeedbackStatus: (id: string, status: FeedbackStatus) =>
+    apiFetch<FeedbackRow>(`/feedback/${id}`, { method: "PATCH", body: JSON.stringify({ status }) }),
   audit: (q: PageQuery & { action?: string }) => apiFetch<Page<AuditRow>>("/audit-log", { query: { ...q } }),
 
   waitlist: ({ pilot, ...q }: WaitlistQuery) =>

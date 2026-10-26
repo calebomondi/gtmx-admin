@@ -13,6 +13,7 @@ import { adminApi, WAITLIST_STATUSES, type WaitlistRow, type WaitlistStats } fro
 import { formatRelative } from "@/lib/format"
 import { useApi } from "@/lib/use-api"
 import { useSearchState } from "@/lib/use-search-state"
+import { LetIn } from "./let-in"
 import { SignupDialog } from "./signup-dialog"
 import { StatusSelect } from "./status-select"
 import { SELLS_TO_LABEL, STAGE_LABEL, sourceLine } from "./waitlist-labels"
@@ -75,6 +76,13 @@ export function WaitlistPage() {
     },
     { header: "From", hideBelow: "lg", cell: (r) => sourceLine(r.source) },
     { header: "Joined", hideBelow: "sm", cell: (r) => formatRelative(r.created_at) },
+    {
+      header: "",
+      cell: (r) => <LetIn row={r} onDone={() => {
+        reload()
+        stats.reload()
+      }} />,
+    },
     {
       header: "Status",
       cell: (r) => (

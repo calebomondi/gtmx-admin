@@ -4,7 +4,7 @@ import { Badge } from "@workspace/ui/components/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@workspace/ui/components/chart"
 
-import { TopWorkspacesTable } from "@/components/top-workspaces"
+import { TopLacesTable } from "@/components/top-laces"
 import type { UserDetail } from "@/lib/api/admin"
 import { formatDay } from "@/lib/format"
 
@@ -23,7 +23,7 @@ export function UserActivityCard({ user }: { user: UserDetail }) {
     <Card>
       <CardHeader>
         <CardTitle>Time in app</CardTitle>
-        <CardDescription>Active minutes per day, last 30 days, and the workspaces they spent it in</CardDescription>
+        <CardDescription>Active minutes per day, last 30 days, and their busiest Laces</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <ChartContainer config={config} className="aspect-auto h-40 w-full">
@@ -35,7 +35,7 @@ export function UserActivityCard({ user }: { user: UserDetail }) {
             <Bar isAnimationActive={false} dataKey="active_minutes" fill="var(--color-active_minutes)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartContainer>
-        <TopWorkspacesTable rows={user.top_workspaces} />
+        <TopLacesTable rows={user.top_laces} />
       </CardContent>
     </Card>
   )

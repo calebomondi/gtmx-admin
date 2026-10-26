@@ -5,7 +5,7 @@ import { ToggleGroup, ToggleGroupItem } from "@workspace/ui/components/toggle-gr
 import { CostBreakdown } from "@/components/cost-breakdown"
 import { LoadState } from "@/components/load-state"
 import { PageShell } from "@/components/page-shell"
-import { TopWorkspacesTable } from "@/components/top-workspaces"
+import { TopLacesTable } from "@/components/top-laces"
 import { adminApi } from "@/lib/api/admin"
 import { useApi } from "@/lib/use-api"
 import { useSearchState } from "@/lib/use-search-state"
@@ -13,9 +13,9 @@ import { ActivityCharts } from "./activity-chart"
 import { ConnectionsCard } from "./connections-card"
 import { EconomicsCard } from "./economics-card"
 import { FeatureUseChart, GrowthChart, TimeInAppChart } from "./engagement-charts"
-import { DropOffCard, FunnelCard } from "./funnel-card"
+import { FailuresCard, FunnelCard } from "./funnel-card"
 import { EngagementCards, MetricCards } from "./metric-cards"
-import { OfferSplit } from "./offer-split"
+import { OnboardingCard } from "./onboarding-card"
 import { RunsByKind } from "./runs-by-kind"
 
 const WINDOWS = ["7", "30", "90"]
@@ -73,7 +73,7 @@ export function OverviewPage() {
           {(e) => (
             <Grid>
               <FeatureUseChart series={e.series} />
-              <OfferSplit engagement={e} />
+              <OnboardingCard engagement={e} />
             </Grid>
           )}
         </Section>
@@ -81,7 +81,7 @@ export function OverviewPage() {
           {(f) => (
             <Grid>
               <FunnelCard funnel={f} />
-              <DropOffCard funnel={f} />
+              <FailuresCard funnel={f} />
             </Grid>
           )}
         </Section>
@@ -93,10 +93,10 @@ export function OverviewPage() {
           {(e) => (
             <Card>
               <CardHeader>
-                <CardTitle>Most-used workspaces</CardTitle>
+                <CardTitle>Busiest Laces</CardTitle>
               </CardHeader>
               <CardContent>
-                <TopWorkspacesTable rows={e.top_workspaces} showOwner />
+                <TopLacesTable rows={e.top_laces} showOwner />
               </CardContent>
             </Card>
           )}

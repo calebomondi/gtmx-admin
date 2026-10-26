@@ -12,12 +12,15 @@ import {
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
 import {
-  BellIcon,
   ChartLineIcon,
-  FoldersIcon,
+  CursorClickIcon,
+  ChatsCircleIcon,
+  ChatTeardropTextIcon,
   LightningIcon,
   ScrollIcon,
   ShieldCheckIcon,
+  TicketIcon,
+  SparkleIcon,
   UserPlusIcon,
   UsersIcon,
 } from "@phosphor-icons/react"
@@ -28,10 +31,13 @@ import type { Me } from "@/lib/api/admin"
 const NAV = [
   { to: "/", label: "Overview", icon: ChartLineIcon, end: true },
   { to: "/users", label: "Users", icon: UsersIcon },
+  { to: "/laces", label: "Laces", icon: SparkleIcon },
+  { to: "/questions", label: "Questions", icon: ChatsCircleIcon },
+  { to: "/feedback", label: "Feedback", icon: ChatTeardropTextIcon },
   { to: "/runs", label: "Runs", icon: LightningIcon },
-  { to: "/workspaces", label: "Workspaces", icon: FoldersIcon },
-  { to: "/signals", label: "Signals", icon: BellIcon },
+  { to: "/events", label: "Events", icon: CursorClickIcon },
   { to: "/waitlist", label: "Waitlist", icon: UserPlusIcon },
+  { to: "/pilot", label: "Pilot access", icon: TicketIcon },
   { to: "/audit", label: "Audit log", icon: ScrollIcon },
 ]
 

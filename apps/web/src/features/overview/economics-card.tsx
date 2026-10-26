@@ -8,9 +8,9 @@ import { formatDuration, formatUsd } from "@/lib/format"
 /** Speed and unit cost of the core flow, and who spends the most. */
 export function EconomicsCard({ metrics: m }: { metrics: Metrics }) {
   const facts = [
-    ["Discovery time (median)", formatDuration(m.discovery_p50_s)],
-    ["Discovery time (slowest 10%)", formatDuration(m.discovery_p90_s)],
-    ["Cost per finished discovery", m.cost_per_completed_discovery_usd === null ? "—" : formatUsd(m.cost_per_completed_discovery_usd)],
+    ["Onboarding time (median)", formatDuration(m.onboarding_p50_s)],
+    ["Onboarding time (slowest 10%)", formatDuration(m.onboarding_p90_s)],
+    ["Cost per onboarded Lace", m.cost_per_onboarded_lace_usd === null ? "—" : formatUsd(m.cost_per_onboarded_lace_usd)],
     ["Spend per active user", m.spend_per_active_user_usd === null ? "—" : formatUsd(m.spend_per_active_user_usd)],
   ]
   return (

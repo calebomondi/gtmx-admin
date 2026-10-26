@@ -18,9 +18,8 @@ import { formatDay } from "@/lib/format"
 const growthConfig = {
   new_users: { label: "New users", color: "var(--series-1)" },
   active_users: { label: "Active users", color: "var(--series-2)" },
-  workspaces_created: { label: "Workspaces created", color: "var(--series-3)" },
-  projects_created: { label: "Projects created", color: "var(--series-4)" },
-  workspaces_interacted: { label: "Workspaces used", color: "var(--series-5)" },
+  laces_created: { label: "Laces created", color: "var(--series-3)" },
+  laces_active: { label: "Laces at work", color: "var(--series-4)" },
 } satisfies ChartConfig
 type GrowthKey = keyof typeof growthConfig
 const GROWTH_KEYS = Object.keys(growthConfig) as GrowthKey[]
@@ -30,7 +29,7 @@ const timeConfig = {
 } satisfies ChartConfig
 
 const featureConfig = {
-  chat_messages: { label: "Chat messages", color: "var(--series-1)" },
+  questions: { label: "Questions", color: "var(--series-1)" },
   competitor_runs: { label: "Competitor research", color: "var(--series-2)" },
   account_runs: { label: "Account discovery", color: "var(--series-3)" },
   outreach_drafted: { label: "Outreach drafted", color: "var(--series-4)" },
@@ -61,7 +60,7 @@ function ChartCard({ title, description, actions, children }: {
 }
 
 export function GrowthChart({ series }: { series: EngagementDay[] }) {
-  const [shown, setShown] = useState<GrowthKey[]>(["new_users", "active_users", "workspaces_created", "projects_created"])
+  const [shown, setShown] = useState<GrowthKey[]>(["new_users", "active_users", "laces_created", "laces_active"])
   return (
     <ChartCard
       title="Growth per day"
@@ -121,7 +120,7 @@ export function TimeInAppChart({ series }: { series: EngagementDay[] }) {
 
 export function FeatureUseChart({ series }: { series: EngagementDay[] }) {
   return (
-    <ChartCard title="Feature use per day" description="What people do once they have a workspace">
+    <ChartCard title="Feature use per day" description="What people do with their Laces">
       <ChartContainer config={featureConfig} className="aspect-auto h-64 w-full">
         <BarChart data={series}>
           <CartesianGrid vertical={false} />
