@@ -14,6 +14,7 @@ import {
 import {
   ChartLineIcon,
   ChatsCircleIcon,
+  ChatTeardropTextIcon,
   LightningIcon,
   ScrollIcon,
   ShieldCheckIcon,
@@ -31,6 +32,7 @@ const NAV = [
   { to: "/users", label: "Users", icon: UsersIcon },
   { to: "/laces", label: "Laces", icon: SparkleIcon },
   { to: "/questions", label: "Questions", icon: ChatsCircleIcon },
+  { to: "/feedback", label: "Feedback", icon: ChatTeardropTextIcon },
   { to: "/runs", label: "Runs", icon: LightningIcon },
   { to: "/waitlist", label: "Waitlist", icon: UserPlusIcon },
   { to: "/pilot", label: "Pilot access", icon: TicketIcon },
