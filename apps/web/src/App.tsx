@@ -17,6 +17,7 @@ const LaceDetailPage = page(() => import("@/features/laces/lace-detail-page"), "
 const RunsPage = page(() => import("@/features/runs/runs-page"), "RunsPage")
 const RunDetailPage = page(() => import("@/features/runs/run-detail-page"), "RunDetailPage")
 const QuestionsPage = page(() => import("@/features/questions/questions-page"), "QuestionsPage")
+const PilotAccessPage = page(() => import("@/features/pilot/pilot-access-page"), "PilotAccessPage")
 const AuditPage = page(() => import("@/features/audit/audit-page"), "AuditPage")
 const WaitlistPage = page(() => import("@/features/waitlist/waitlist-page"), "WaitlistPage")
 
@@ -36,6 +37,7 @@ export function App() {
             <Route path="runs/:runId" element={<RunDetailPage />} />
             <Route path="questions" element={<QuestionsPage />} />
             <Route path="waitlist" element={<WaitlistPage />} />
+            <Route path="pilot" element={<PilotAccessPage />} />
             <Route path="audit" element={<AuditPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
