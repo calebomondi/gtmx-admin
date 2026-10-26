@@ -313,6 +313,39 @@ export interface PageQuery {
 export type WaitlistStatus = "new" | "contacted" | "invited" | "onboarded"
 export const WAITLIST_STATUSES: WaitlistStatus[] = ["new", "contacted", "invited", "onboarded"]
 
+/** Mirrors backend/app/schemas/events.py EventName. */
+export type EventName =
+  | "page_viewed"
+  | "setup_phase"
+  | "lace_settings_opened"
+  | "lace_people_opened"
+  | "chat_thread_switched"
+  | "quick_ask_used"
+  | "contact_opened"
+  | "search_opened"
+  | "feedback_opened"
+
+/** One thing a user did in the app. Mirrors AdminEventRow. */
+export interface EventRow {
+  id: number
+  user_id: string
+  user_email: string | null
+  lace_id: string | null
+  lace_name: string | null
+  name: EventName
+  detail: string | null
+  created_at: string
+}
+
+/** Mirrors EventSummary. */
+export interface EventSummary {
+  days: number
+  /** Distinct people with any event in the window. */
+  people: number
+  totals: { name: EventName; detail: string | null; count: number; users: number }[]
+  per_day: { day: string; count: number; users: number }[]
+}
+
 /** An email let into the closed pilot. Mirrors backend/app/schemas/pilot.py PilotAccessRow. */
 export interface PilotAccessRow {
   id: string
@@ -407,6 +440,9 @@ export const adminApi = {
 
   questions: (q: PageQuery & { q?: string; user_id?: string; lace_id?: string }) =>
     apiFetch<Page<QuestionRow>>("/questions", { query: { ...q } }),
+  eventSummary: (q: { days: number; user_id?: string; lace_id?: string }) =>
+    apiFetch<EventSummary>("/events/summary", { query: { ...q } }),
+  events: (q: PageQuery & { user_id?: string; lace_id?: string }) => apiFetch<Page<EventRow>>("/events", { query: { ...q } }),
   pilotStatus: () => apiFetch<{ invite_only: boolean }>("/pilot-access/status"),
   pilotAccess: (q: PageQuery & { q?: string }) => apiFetch<Page<PilotAccessRow>>("/pilot-access", { query: { ...q } }),
   addPilotAccess: (emails: string[]) =>
