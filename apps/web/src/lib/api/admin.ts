@@ -346,6 +346,17 @@ export interface EventSummary {
   per_day: { day: string; count: number; users: number }[]
 }
 
+/** An email let into the closed pilot. Mirrors backend/app/schemas/pilot.py PilotAccessRow. */
+export interface PilotAccessRow {
+  id: string
+  email: string
+  source: "admin" | "waitlist"
+  granted_by_email: string | null
+  created_at: string
+  /** An account exists for this email. */
+  signed_up: boolean
+}
+
 export type FeedbackStatus = "new" | "read"
 export const FEEDBACK_STATUSES: FeedbackStatus[] = ["new", "read"]
 
@@ -432,6 +443,12 @@ export const adminApi = {
   eventSummary: (q: { days: number; user_id?: string; lace_id?: string }) =>
     apiFetch<EventSummary>("/events/summary", { query: { ...q } }),
   events: (q: PageQuery & { user_id?: string; lace_id?: string }) => apiFetch<Page<EventRow>>("/events", { query: { ...q } }),
+  pilotStatus: () => apiFetch<{ invite_only: boolean }>("/pilot-access/status"),
+  pilotAccess: (q: PageQuery & { q?: string }) => apiFetch<Page<PilotAccessRow>>("/pilot-access", { query: { ...q } }),
+  addPilotAccess: (emails: string[]) =>
+    apiFetch<{ added: number }>("/pilot-access", { method: "POST", body: JSON.stringify({ emails }) }),
+  removePilotAccess: (id: string) => apiFetch<void>(`/pilot-access/${id}`, { method: "DELETE" }),
+  approveWaitlistSignup: (id: string) => apiFetch<WaitlistRow>(`/waitlist/${id}/approve`, { method: "POST" }),
   feedback: (q: PageQuery & { q?: string; status?: FeedbackStatus }) =>
     apiFetch<Page<FeedbackRow>>("/feedback", { query: { ...q } }),
   setFeedbackStatus: (id: string, status: FeedbackStatus) =>
