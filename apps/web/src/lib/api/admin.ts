@@ -184,6 +184,8 @@ export interface LaceRow {
   user_id: string
   user_email: string | null
   created_at: string
+  /** Shares its domain with an older Lace, which holds it. */
+  domain_clash: boolean
   last_active_at: string
   facts: number
   /** Saved (tracked). */
@@ -207,6 +209,20 @@ export interface LaceDetail extends LaceRow {
   brief_frequency: "off" | "daily" | "weekly"
   brief_email: boolean
   recent_runs: RunRow[]
+  /** Its website's domain, when it holds it. */
+  domain: string | null
+  /** For a duplicate: the Lace holding its domain. */
+  clashes_with: LaceHolder | null
+}
+
+/** Mirrors AdminLaceHolder. */
+export interface LaceHolder {
+  id: string
+  name: string
+  status: LaceRow["status"]
+  user_id: string
+  user_email: string | null
+  created_at: string
 }
 
 export interface RunRow {
@@ -349,8 +365,11 @@ export const adminApi = {
   setQuota: (id: string, kind: string, daily_cap: number | null) =>
     apiFetch<QuotaRow[]>(`/users/${id}/quotas`, { method: "PUT", body: JSON.stringify({ kind, daily_cap }) }),
 
-  laces: (q: PageQuery & { q?: string; user_id?: string }) => apiFetch<Page<LaceRow>>("/laces", { query: { ...q } }),
+  laces: ({ clash, ...q }: PageQuery & { q?: string; user_id?: string; clash?: boolean }) =>
+    apiFetch<Page<LaceRow>>("/laces", { query: { ...q, clash: clash === undefined ? undefined : String(clash) } }),
   lace: (id: string) => apiFetch<LaceDetail>(`/laces/${id}`),
+  foldLace: (id: string) => apiFetch<LaceDetail>(`/laces/${id}/fold`, { method: "POST" }),
+  takeLaceDomain: (id: string) => apiFetch<LaceDetail>(`/laces/${id}/take-domain`, { method: "POST" }),
 
   runs: (q: PageQuery & { status?: string; kind?: string; user_id?: string; lace_id?: string }) =>
     apiFetch<Page<RunRow>>("/runs", { query: { ...q } }),
