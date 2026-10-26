@@ -13,6 +13,7 @@ import {
 } from "@workspace/ui/components/sidebar"
 import {
   ChartLineIcon,
+  CursorClickIcon,
   ChatsCircleIcon,
   LightningIcon,
   ScrollIcon,
@@ -31,6 +32,7 @@ const NAV = [
   { to: "/laces", label: "Laces", icon: SparkleIcon },
   { to: "/questions", label: "Questions", icon: ChatsCircleIcon },
   { to: "/runs", label: "Runs", icon: LightningIcon },
+  { to: "/events", label: "Events", icon: CursorClickIcon },
   { to: "/waitlist", label: "Waitlist", icon: UserPlusIcon },
   { to: "/audit", label: "Audit log", icon: ScrollIcon },
 ]

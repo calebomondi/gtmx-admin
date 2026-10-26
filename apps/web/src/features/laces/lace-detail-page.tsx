@@ -82,6 +82,9 @@ export function LaceDetailPage() {
                 <Link className="underline-offset-4 hover:underline" to={`/questions?lace_id=${lace.id}`}>
                   What the founder asked it
                 </Link>
+                <Link className="underline-offset-4 hover:underline" to={`/events?lace_id=${lace.id}`}>
+                  What was done in it
+                </Link>
               </div>
             </CardContent>
           </Card>

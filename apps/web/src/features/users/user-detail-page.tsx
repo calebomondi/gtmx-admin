@@ -106,6 +106,10 @@ export function UserDetailPage() {
                   <Link to={`/questions?user_id=${user.id}`} className="underline-offset-4 hover:underline">
                     What they asked their Laces
                   </Link>
+                  {" · "}
+                  <Link to={`/events?user_id=${user.id}`} className="underline-offset-4 hover:underline">
+                    What they did in the app
+                  </Link>
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-2 text-sm">
