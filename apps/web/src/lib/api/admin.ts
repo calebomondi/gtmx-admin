@@ -313,6 +313,17 @@ export interface PageQuery {
 export type WaitlistStatus = "new" | "contacted" | "invited" | "onboarded"
 export const WAITLIST_STATUSES: WaitlistStatus[] = ["new", "contacted", "invited", "onboarded"]
 
+/** An email let into the closed pilot. Mirrors backend/app/schemas/pilot.py PilotAccessRow. */
+export interface PilotAccessRow {
+  id: string
+  email: string
+  source: "admin" | "waitlist"
+  granted_by_email: string | null
+  created_at: string
+  /** An account exists for this email. */
+  signed_up: boolean
+}
+
 export type FeedbackStatus = "new" | "read"
 export const FEEDBACK_STATUSES: FeedbackStatus[] = ["new", "read"]
 
@@ -396,6 +407,12 @@ export const adminApi = {
 
   questions: (q: PageQuery & { q?: string; user_id?: string; lace_id?: string }) =>
     apiFetch<Page<QuestionRow>>("/questions", { query: { ...q } }),
+  pilotStatus: () => apiFetch<{ invite_only: boolean }>("/pilot-access/status"),
+  pilotAccess: (q: PageQuery & { q?: string }) => apiFetch<Page<PilotAccessRow>>("/pilot-access", { query: { ...q } }),
+  addPilotAccess: (emails: string[]) =>
+    apiFetch<{ added: number }>("/pilot-access", { method: "POST", body: JSON.stringify({ emails }) }),
+  removePilotAccess: (id: string) => apiFetch<void>(`/pilot-access/${id}`, { method: "DELETE" }),
+  approveWaitlistSignup: (id: string) => apiFetch<WaitlistRow>(`/waitlist/${id}/approve`, { method: "POST" }),
   feedback: (q: PageQuery & { q?: string; status?: FeedbackStatus }) =>
     apiFetch<Page<FeedbackRow>>("/feedback", { query: { ...q } }),
   setFeedbackStatus: (id: string, status: FeedbackStatus) =>

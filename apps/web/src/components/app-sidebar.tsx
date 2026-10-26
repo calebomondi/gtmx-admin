@@ -18,6 +18,7 @@ import {
   LightningIcon,
   ScrollIcon,
   ShieldCheckIcon,
+  TicketIcon,
   SparkleIcon,
   UserPlusIcon,
   UsersIcon,
@@ -34,6 +35,7 @@ const NAV = [
   { to: "/feedback", label: "Feedback", icon: ChatTeardropTextIcon },
   { to: "/runs", label: "Runs", icon: LightningIcon },
   { to: "/waitlist", label: "Waitlist", icon: UserPlusIcon },
+  { to: "/pilot", label: "Pilot access", icon: TicketIcon },
   { to: "/audit", label: "Audit log", icon: ScrollIcon },
 ]
 
