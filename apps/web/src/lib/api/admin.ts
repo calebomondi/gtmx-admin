@@ -449,6 +449,8 @@ export const adminApi = {
     apiFetch<{ added: number }>("/pilot-access", { method: "POST", body: JSON.stringify({ emails }) }),
   removePilotAccess: (id: string) => apiFetch<void>(`/pilot-access/${id}`, { method: "DELETE" }),
   approveWaitlistSignup: (id: string) => apiFetch<WaitlistRow>(`/waitlist/${id}/approve`, { method: "POST" }),
+  removeSignupFromPilot: (id: string) =>
+    apiFetch<WaitlistRow>(`/waitlist/${id}/remove-from-pilot`, { method: "POST" }),
   feedback: (q: PageQuery & { q?: string; status?: FeedbackStatus }) =>
     apiFetch<Page<FeedbackRow>>("/feedback", { query: { ...q } }),
   setFeedbackStatus: (id: string, status: FeedbackStatus) =>
