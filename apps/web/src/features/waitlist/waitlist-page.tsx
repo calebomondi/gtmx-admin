@@ -14,6 +14,7 @@ import { formatRelative } from "@/lib/format"
 import { useApi } from "@/lib/use-api"
 import { useSearchState } from "@/lib/use-search-state"
 import { LetIn } from "./let-in"
+import { RemoveFromPilot } from "./remove-from-pilot"
 import { SignupDialog } from "./signup-dialog"
 import { StatusSelect } from "./status-select"
 import { SELLS_TO_LABEL, STAGE_LABEL, sourceLine } from "./waitlist-labels"
@@ -78,10 +79,18 @@ export function WaitlistPage() {
     { header: "Joined", hideBelow: "sm", cell: (r) => formatRelative(r.created_at) },
     {
       header: "",
-      cell: (r) => <LetIn row={r} onDone={() => {
-        reload()
-        stats.reload()
-      }} />,
+      cell: (r) => {
+        const changed = () => {
+          reload()
+          stats.reload()
+        }
+        return (
+          <div className="flex items-center gap-1">
+            <LetIn row={r} onDone={changed} />
+            <RemoveFromPilot row={r} onDone={changed} />
+          </div>
+        )
+      },
     },
     {
       header: "Status",
