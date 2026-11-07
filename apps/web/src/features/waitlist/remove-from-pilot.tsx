@@ -6,9 +6,9 @@ import { adminApi, type WaitlistRow } from "@/lib/api/admin"
 
 /** Take a signup off the pilot: their pilot request is dropped (freeing a
  * spot) and they leave Pilot access. They stay on the waitlist. For those who
- * asked for the pilot or were let in. The backend audits it. */
+ * asked for the pilot or are on Pilot access. The backend audits it. */
 export function RemoveFromPilot({ row, onDone }: { row: WaitlistRow; onDone: () => void }) {
-  if (!row.wants_pilot && row.status !== "invited") return null
+  if (!row.wants_pilot && !row.pilot_access) return null
   return (
     <div onClick={(e) => e.stopPropagation()}>
       <ConfirmDialog
