@@ -389,6 +389,8 @@ export interface WaitlistRow {
   expectations: string | null
   source: { utm_source?: string; utm_medium?: string; utm_campaign?: string; referrer?: string }
   status: WaitlistStatus
+  /** Their email is on Pilot access, so they can use the app. */
+  pilot_access: boolean
   confirmation_sent_at: string | null
   created_at: string
   updated_at: string

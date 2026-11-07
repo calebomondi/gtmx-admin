@@ -4,10 +4,10 @@ import { Button } from "@workspace/ui/components/button"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { adminApi, type WaitlistRow } from "@/lib/api/admin"
 
-/** Let a signup into the closed pilot (and mark them invited); for those
- * not yet invited. The backend audits it. */
+/** Let a signup into the closed pilot (and mark them invited); for anyone
+ * not on Pilot access yet, whatever their status says. The backend audits it. */
 export function LetIn({ row, onDone }: { row: WaitlistRow; onDone: () => void }) {
-  if (row.status !== "new" && row.status !== "contacted") return null
+  if (row.pilot_access) return null
   return (
     <div onClick={(e) => e.stopPropagation()}>
       <ConfirmDialog
